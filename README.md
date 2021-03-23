@@ -1,6 +1,12 @@
 # PA199_project
 
-**07.03.2021**
+**Week 3**
+ - no progress
+
+**Week 2**
+ - no progress
+
+**Week 1**
 - project setup
 - GLFW and glad
 - open empty window test
