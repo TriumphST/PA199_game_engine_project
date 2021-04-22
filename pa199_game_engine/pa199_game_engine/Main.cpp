@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+#include "Vector3.h"
+#include "Test.h"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -10,10 +13,9 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-int main()
-{
+int openWindow() {
     // glfw: initialize and configure
-    // ------------------------------
+// ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -61,6 +63,14 @@ int main()
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
+}
+
+int main()
+{
+    Test t = Test();
+    t.runTests();
+    return 0;
+    //return openWindow();
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

@@ -22,6 +22,8 @@ float Vector3::magnitude()
 Vector3 Vector3::normalized()
 {
 	float mag = magnitude();
+	if(mag == 0)
+		return Vector3(0,0,0);
 	return Vector3(x / mag, y / mag, z / mag);
 }
 
