@@ -1,5 +1,17 @@
 # PA199_project
 
+**Week 9**
+ - Implemented Matrix3, Ray
+
+**Week 8**
+ - no progress
+
+**Week 7**
+ - no progress
+
+**Week 6**
+ - no progress
+
 **Week 5**
  - no progress
 
@@ -7,7 +19,7 @@
  - no progress
 
 **Week 3**
- - no progress
+ - Implemented Vector3
 
 **Week 2**
  - no progress
