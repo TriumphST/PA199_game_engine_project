@@ -7,5 +7,6 @@ public:
 private:
     void testVector3();
     void testMatrix3();
+    void testRay();
 };
 

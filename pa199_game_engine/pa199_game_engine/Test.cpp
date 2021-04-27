@@ -1,6 +1,7 @@
 #include "Test.h"
 #include "Vector3.h"
 #include "Matrix3.h"
+#include "Ray.h"
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -10,6 +11,7 @@ void Test::runTests()
 {
     testVector3();
     testMatrix3();
+    testRay();
     std::cout << "All tests passed" << std::endl;
 }
 
@@ -142,4 +144,12 @@ void Test::testMatrix3()
     ABexp = Matrix3(arrABexp2);
     AB = A - B;
     assert(AB == ABexp);
+}
+
+void Test::testRay()
+{
+    Ray r1 = Ray(Vector3(2, 6, -9), Vector3(3, 4, -4));
+    Ray r2 = Ray(Vector3(-1, -2, 3), Vector3(2, -6, 1));
+    float d = r1.distance(r2);
+    assert(isClose(d, 4.7402011));
 }
