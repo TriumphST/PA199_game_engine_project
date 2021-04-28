@@ -1,4 +1,6 @@
 #pragma once
+#include "Cylindrical3.h"
+
 class Vector3
 {
 public:

@@ -9,7 +9,6 @@ public:
 
 	Vector2();
 	Vector2(float x, float y);
-
 	Polar2 toPolar();
 };
 

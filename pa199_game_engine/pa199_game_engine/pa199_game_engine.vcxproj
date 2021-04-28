@@ -147,17 +147,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cylindrical3.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Matrix3.cpp" />
+    <ClCompile Include="Polar2.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cylindrical3.h" />
     <ClInclude Include="Matrix3.h" />
+    <ClInclude Include="Polar2.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Test.h" />
+    <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

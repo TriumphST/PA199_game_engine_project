@@ -1,4 +1,5 @@
 #include "Polar2.h"
+#include "Vector2.h"
 #include <math.h>
 
 Polar2::Polar2()

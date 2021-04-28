@@ -1,5 +1,6 @@
 #pragma once
-#include "Vector2.h"
+
+class Vector2;
 
 class Polar2
 {
