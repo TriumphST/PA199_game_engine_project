@@ -12,6 +12,7 @@ public:
 	float magnitude();
 	Vector3 normalized();
 	Vector3 opposite();
+	bool operator==(const Vector3& other);
 	Vector3 operator*(const float& scalar);
 	Vector3 operator+(const Vector3& other);
 	Vector3 operator-(const Vector3& other);

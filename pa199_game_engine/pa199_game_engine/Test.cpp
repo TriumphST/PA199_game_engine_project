@@ -148,8 +148,37 @@ void Test::testMatrix3()
 
 void Test::testRay()
 {
+    // distance ray : ray
     Ray r1 = Ray(Vector3(2, 6, -9), Vector3(3, 4, -4));
     Ray r2 = Ray(Vector3(-1, -2, 3), Vector3(2, -6, 1));
     float d = r1.distance(r2);
     assert(isClose(d, 4.7402011));
+
+    r1 = Ray(Vector3(1, 1, 3), Vector3(1, -2, -3));
+    r2 = Ray(Vector3(6, 5, 0), Vector3(-3, 0, 1));
+    d = r1.distance(r2);
+    float res = 20 / sqrt(26);
+    assert(isClose(d, res));
+
+    r1 = Ray(Vector3(0, 0, 1), Vector3(1, -2, -3));
+    r2 = Ray(Vector3(0, 0, 1), Vector3(-3, 0, 1));
+    d = r1.distance(r2);
+    assert(isClose(d, 0));
+
+    // distance ray : point
+    r1 = Ray(Vector3(3,1,-1), Vector3(2, 1, 2));
+    Vector3 Q = Vector3(0,2,3);
+    d = r1.distance(Q);
+    assert(isClose(d, 5));
+
+    r1 = Ray(Vector3(0, 2, 3), Vector3(2, 1, 2));
+    Q = Vector3(0, 2, 3);
+    d = r1.distance(Q);
+    assert(isClose(d, 0));
+
+    // closest
+    r1 = Ray(Vector3(0, 2, 3), Vector3(2, 1, 2));
+    Q = Vector3(0, 2, 3);
+    Vector3 C = r1.closest(Q);
+    assert(C == Q);
 }

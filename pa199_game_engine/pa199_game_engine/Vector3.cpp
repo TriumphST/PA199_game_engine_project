@@ -60,3 +60,11 @@ Vector3 Vector3::opposite()
 {
 	return (*this) * -1;
 }
+
+bool Vector3::operator==(const Vector3& other)
+{
+	if (x == other.x && y == other.y && z == other.z) {
+		return true;
+	}
+	return false;
+}
