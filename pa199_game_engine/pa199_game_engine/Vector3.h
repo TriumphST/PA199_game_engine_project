@@ -18,5 +18,6 @@ public:
 	Vector3 operator-(const Vector3& other);
 	Vector3 cross(const Vector3 other);
 	float dot(const Vector3 other);
+	Cylindrical3 toCylindrical();
 };
 

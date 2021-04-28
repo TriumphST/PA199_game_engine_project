@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include "Cylindrical3.h"
 #include <math.h>
 
 
@@ -54,6 +55,15 @@ Vector3 Vector3::cross(const Vector3 other)
 float Vector3::dot(const Vector3 other)
 {
 	return x*other.x + y*other.y + z*other.z;
+}
+
+Cylindrical3 Vector3::toCylindrical()
+{
+	float r = sqrt((x * x) + (y * y));
+	float angle = atan(y / x);
+	Cylindrical3 res = Cylindrical3(r, angle, z);
+	return res;
+	return Cylindrical3();
 }
 
 Vector3 Vector3::opposite()
