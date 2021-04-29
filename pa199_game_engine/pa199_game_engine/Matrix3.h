@@ -2,10 +2,9 @@
 #include "Vector3.h"
 class Matrix3
 {
-private:
+public:
 	float core[3][3] = { 0 };
 	bool isSingular = false;
-public:
 	Matrix3();
 	Matrix3(float init[3][3]);
 	bool GetIsSingular();

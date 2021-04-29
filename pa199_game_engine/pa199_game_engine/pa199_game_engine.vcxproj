@@ -151,6 +151,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Matrix3.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="Polar2.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -161,12 +162,18 @@
   <ItemGroup>
     <ClInclude Include="Cylindrical3.h" />
     <ClInclude Include="Matrix3.h" />
+    <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Polar2.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\simpleFragment.fs" />
+    <None Include="shaders\simpleVertex.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
