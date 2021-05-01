@@ -91,5 +91,11 @@
     <None Include="shaders\simpleVertex.vs">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\coordinate_system.fs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\coordinate_system.vs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
