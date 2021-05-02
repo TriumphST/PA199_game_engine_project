@@ -11,6 +11,8 @@ class Gameobject
 public:
     Gameobject(std::vector<float> vertices, std::string vertexShaderPath, std::string fragmentShaderPath);
 
+    float toRadians(float x);
+
     Vector3 position;
     Vector3 rotation;
     Vector3 scale;

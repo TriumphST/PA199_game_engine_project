@@ -196,7 +196,7 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
 
     //unsigned int * buffers = SetUpVertexData();
     //unsigned int VBO = buffers[0];

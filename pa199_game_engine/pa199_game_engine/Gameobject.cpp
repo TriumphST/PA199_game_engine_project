@@ -11,7 +11,7 @@ Gameobject::Gameobject(std::vector<float> vertices, std::string vertexShaderPath
 
     this->vertices = vertices;
 
-    //Shader shaderProgram(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
+    Shader shaderProgram(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
 
     //sending data to opengl
     glGenVertexArrays(1, &VAO);
@@ -23,7 +23,7 @@ Gameobject::Gameobject(std::vector<float> vertices, std::string vertexShaderPath
     glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(this->vertices[0]), &this->vertices[0], GL_STATIC_DRAW);
 }
 
-float toRadians(float x) {
+float Gameobject::toRadians(float x) {
     return 2 * M_PI * (x / 360);
 }
 
