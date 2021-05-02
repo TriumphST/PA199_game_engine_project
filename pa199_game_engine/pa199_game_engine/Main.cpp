@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,7 +14,7 @@
 #include "Test.h"
 #include "Shader.h"
 #include "Matrix4.h"
-#include "Vector3.h"
+#include "Gameobject.h"
 
 # define M_PI           3.14159265358979323846
 
@@ -31,42 +32,7 @@ Vector3 cubePositions[CUBE_COUNT] = {
     Vector3(1.0f,  0.0f, 0.0f),
 };
 
-GLFWwindow* openWindow() {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        assert(false);
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    // glad: load all OpenGL function pointers
-    // ---------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        assert(false);
-    }
-
-    return window;
-}
-
-unsigned int * SetUpVertexData()
-{
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
+std::vector<float> cubeVertices = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -108,31 +74,83 @@ unsigned int * SetUpVertexData()
          0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
         -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-    };
+};
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+GLFWwindow* openWindow() {
+    // glfw: initialize and configure
+    // ------------------------------
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glBindVertexArray(VAO);
+    // glfw window creation
+    // --------------------
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Failed to create GLFW window" << std::endl;
+        glfwTerminate();
+        assert(false);
+    }
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // glad: load all OpenGL function pointers
+    // ---------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        assert(false);
+    }
 
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    return window;
+}
+
+unsigned int * SetUpVertexData()
+{
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+
+    //unsigned int VBO, VAO;
+    //glGenVertexArrays(1, &VAO);
+    //glGenBuffers(1, &VBO);
+
+    //glBindVertexArray(VAO);
+
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+
+    //// position attribute
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    //glEnableVertexAttribArray(0);
 
 
-    // uncomment this call to draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //// uncomment this call to draw in wireframe polygons.
+    ////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    unsigned int buffers[2] = { VBO, VAO };
-    return buffers;
+    //unsigned int buffers[2] = { VBO, VAO };
+    return nullptr;
 }
 
 float toRadians(float x) {
     return 2 * M_PI * (x / 360);
+}
+
+void renderCube(Shader shaderProgram, unsigned int VAO) 
+{
+    shaderProgram.use();
+}
+
+void renderGOs(std::vector<Gameobject> GOs)
+{
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    for (int i = 0; i < GOs.size(); i++)
+    {
+        GOs[i].render((float)SCR_WIDTH, (float)SCR_HEIGHT);
+    }
 }
 
 void render(Shader shaderProgram, unsigned int VAO) {
@@ -166,50 +184,6 @@ void render(Shader shaderProgram, unsigned int VAO) {
     }
 }
 
-void renderWithGLM(Shader shaderProgram, unsigned int VAO) {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    shaderProgram.use();
-
-    // create transformations
-    glm::mat4 view = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-    glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    // pass transformation matrices to the shader
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-    glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "view"), 1, GL_FALSE, &view[0][0]);
-
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
-    // render boxes
-    glBindVertexArray(VAO);
-    for (unsigned int i = 0; i < 10; i++)
-    {
-        // calculate the model matrix for each object and pass it to shader before drawing
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        //ourShader.setMat4("model", model);
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
-}
-
 int main()
 {
     //Test t = Test();
@@ -222,11 +196,22 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
 
-    unsigned int * buffers = SetUpVertexData();
-    unsigned int VBO = buffers[0];
-    unsigned int VAO = buffers[1];
+    //unsigned int * buffers = SetUpVertexData();
+    //unsigned int VBO = buffers[0];
+    //unsigned int VAO = buffers[1];
+
+    std::vector<Gameobject> GOs;
+
+    Gameobject cube1 = Gameobject(cubeVertices, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject cube2 = Gameobject(cubeVertices, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    
+    cube1.position = Vector3(-1.0f, 0.0f, 0.0f);
+    cube2.position = Vector3(1.0f, 0.0f, 0.0f);
+
+    GOs.push_back(cube1);
+    //GOs.push_back(cube2);
 
     // render loop
     // -----------
@@ -237,8 +222,9 @@ int main()
         processInput(window);
 
         // rendering commands here
-        render(ourShader, VAO);
+        //render(ourShader, VAO);
         //renderWithGLM(ourShader, VAO);
+        renderGOs(GOs);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -246,9 +232,14 @@ int main()
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    //glDeleteVertexArrays(1, &VAO);
+    //glDeleteBuffers(1, &VBO);
     //glDeleteProgram(shaderProgram);
+
+    for (int i = 0; i < GOs.size(); i++)
+    {
+        GOs[i].clean();
+    }
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
