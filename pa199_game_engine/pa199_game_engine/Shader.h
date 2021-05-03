@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cassert>
 
 class Shader
 {
@@ -16,6 +17,7 @@ public:
     // ------------------------------------------------------------------------
     Shader()
     {
+        //assert(false);
     };
     Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
     {

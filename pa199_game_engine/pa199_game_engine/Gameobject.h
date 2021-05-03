@@ -9,7 +9,7 @@
 class Gameobject
 {
 public:
-    Gameobject(std::vector<float> vertices, std::string vertexShaderPath, std::string fragmentShaderPath);
+    Gameobject(Shader shaderProgram, std::vector<float> vertices, std::string vertexShaderPath, std::string fragmentShaderPath);
 
     float toRadians(float x);
 
