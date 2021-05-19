@@ -2,8 +2,9 @@
 #include "Matrix4.h"
 # define M_PI           3.14159265358979323846
 
-Gameobject::Gameobject(Shader shaderProgram, std::vector<float> vertices, std::string vertexShaderPath, std::string fragmentShaderPath)
+Gameobject::Gameobject(Shader shaderProgram, std::vector<float> vertices, int stride, int triangles, std::string vertexShaderPath, std::string fragmentShaderPath)
 {
+    this->triangles = triangles;
     position = Vector3(0.0f, 0.0f, 0.0f);
     rotation = Vector3(0.0f, 0.0f, 0.0f);
     scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -24,7 +25,7 @@ Gameobject::Gameobject(Shader shaderProgram, std::vector<float> vertices, std::s
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 }
 
@@ -54,7 +55,7 @@ void Gameobject::render(float with, float height)
     model = model * transM * scaleM;// *rotM;
     shaderProgram.setMat4("model", model.core);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, triangles);
 }
 
 void Gameobject::clean()

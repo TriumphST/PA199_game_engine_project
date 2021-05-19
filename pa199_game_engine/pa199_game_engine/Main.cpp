@@ -15,6 +15,7 @@
 #include "Shader.h"
 #include "Matrix4.h"
 #include "Gameobject.h"
+#include "MeshGenerator.h"
 
 # define M_PI           3.14159265358979323846
 
@@ -131,16 +132,18 @@ int main()
 
     std::vector<Gameobject> GOs;
 
-    Gameobject cube1 = Gameobject(ourShader, cubeVertices, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject cube2 = Gameobject(ourShader, cubeVertices, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    std::vector<float> sphereVertices = MeshGenerator::Sphere(1.0f);
+
+    Gameobject cube1 = Gameobject(ourShader, cubeVertices, 5, 36, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject sphere = Gameobject(ourShader, sphereVertices, 3, 20, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
     cube1.position = Vector3(-1.0f, 0.0f, 0.0f);
     cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
-    cube2.position = Vector3(1.0f, 0.0f, 0.0f);
-    cube2.scale = Vector3(0.5f, 0.5f, 0.5f);
+    sphere.position = Vector3(1.0f, 0.0f, 0.0f);
+    sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
 
     GOs.push_back(cube1);
-    GOs.push_back(cube2);
+    GOs.push_back(sphere);
 
     // render loop
     // -----------

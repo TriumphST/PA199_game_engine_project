@@ -9,7 +9,7 @@
 class Gameobject
 {
 public:
-    Gameobject(Shader shaderProgram, std::vector<float> vertices, std::string vertexShaderPath, std::string fragmentShaderPath);
+    Gameobject(Shader shaderProgram, std::vector<float> vertices, int stride, int triangles, std::string vertexShaderPath, std::string fragmentShaderPath);
 
     float toRadians(float x);
 
@@ -23,6 +23,7 @@ public:
     void clean();
 
 private:
+    int triangles = 0;
     Shader shaderProgram;
 
     GLuint VAO;
