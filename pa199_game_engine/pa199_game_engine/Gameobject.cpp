@@ -58,7 +58,7 @@ void Gameobject::render(float with, float height)
     Matrix4 rotM = Matrix4::rotationMatrix(rotation.x, rotation.y, rotation.z);
 
     Matrix4 model = Matrix4(1.0f);
-    model = model * transM * scaleM;// *rotM;
+    model = model * transM * scaleM * rotM;
     shaderProgram.setMat4("model", model.core);
 
     //glDrawArrays(GL_TRIANGLES, 0, 3);
