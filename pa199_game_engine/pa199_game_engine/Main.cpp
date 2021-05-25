@@ -16,6 +16,7 @@
 #include "Matrix4.h"
 #include "Gameobject.h"
 #include "MeshGenerator.h"
+#include "Mesh.h"
 
 # define M_PI           3.14159265358979323846
 
@@ -25,6 +26,28 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+
+std::vector<Vector3> squereVertices = {
+        Vector3(-0.5f, -0.5f, 0.0f),   //0
+        Vector3(0.5f, -0.5f, 0.0f),    //1
+        Vector3(0.5f,  0.5f, 0.0f),   //2
+        Vector3(-0.5f,  0.5f, 0.0f),    //3
+};
+
+std::vector<unsigned int> squereIndexes = {
+        0,1,2,
+        0,2,3
+};
+
+std::vector<Vector3> triangleVertices = {
+    Vector3(-0.5f, -0.5f, 0.0f),
+    Vector3(0.5f, -0.5f, 0.0f),
+    Vector3(0.0f,  0.5f, 0.0f)
+};
+
+std::vector<unsigned int> triangleIndexes = {
+    0, 1, 2
+};
 
 std::vector<float> cubeVertices = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -132,18 +155,30 @@ int main()
 
     std::vector<Gameobject> GOs;
 
-    std::vector<float> sphereVertices = MeshGenerator::Sphere(1.0f);
+    //std::vector<float> sphereVertices = MeshGenerator::Sphere(1.0f);
 
-    Gameobject cube1 = Gameobject(ourShader, cubeVertices, 5, 36, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject sphere = Gameobject(ourShader, sphereVertices, 3, 20, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Mesh triangleMesh = Mesh(triangleVertices, triangleIndexes);
+    Mesh squereMesh = Mesh(squereVertices, squereIndexes);
+
+    Gameobject triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Gameobject cube1 = Gameobject(ourShader, cubeVertices, 5, 36, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Gameobject sphere = Gameobject(ourShader, sphereVertices, 3, 20, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
-    cube1.position = Vector3(-1.0f, 0.0f, 0.0f);
-    cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
-    sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
+    triangle.position = Vector3(0.0f, 0.5f, 0.0f);
+    triangle.scale = Vector3(0.5f, 0.5f, 0.5f);
 
-    GOs.push_back(cube1);
-    GOs.push_back(sphere);
+    squere.position = Vector3(-1.0f, 0.0f, 0.0f);
+    squere.scale = Vector3(0.5f, 0.5f, 0.5f);
+    //cube1.position = Vector3(-1.0f, 0.0f, 0.0f);
+    //cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
+    //sphere.position = Vector3(1.0f, 0.0f, 0.0f);
+    //sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
+
+    GOs.push_back(triangle);
+    GOs.push_back(squere);
+    //GOs.push_back(cube1);
+    //GOs.push_back(sphere);
 
     // render loop
     // -----------

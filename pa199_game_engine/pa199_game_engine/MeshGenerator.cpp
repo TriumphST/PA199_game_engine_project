@@ -1,7 +1,7 @@
 #include "MeshGenerator.h"
 
 // http://www.songho.ca/opengl/gl_sphere.html
-std::vector<float> MeshGenerator::Sphere(float radius)
+std::vector<Vector3> MeshGenerator::Sphere(float radius)
 {
     // constants
     const float PI = 3.1415926f;
@@ -46,17 +46,29 @@ std::vector<float> MeshGenerator::Sphere(float radius)
     vertices[i1 + 1] = 0;
     vertices[i1 + 2] = -radius;
 
-    std::vector<float> verticesTriangles;
+    std::vector<Vector3> verticesV3;
 
-
-    std::size_t i, j;
+    std::size_t i;
     std::size_t count = vertices.size();
-    for (i = 0, j = 0; i < count; i += 3, j += 2)
+    for (i = 0; i < count; i += 3)
     {
-        verticesTriangles.push_back(vertices[i]);
-        verticesTriangles.push_back(vertices[i + 1]);
-        verticesTriangles.push_back(vertices[i + 2]);
+        verticesV3.push_back(Vector3(vertices[i], vertices[i + 1], vertices[i + 2]));
     }
 
-    return verticesTriangles;
+    return verticesV3;
 }
+
+//std::vector<float> MeshGenerator::SphereGLTriangles(float radius)
+//{
+//    std::vector<Vector3> verticesV3 = Sphere(radius);
+//    std::vector<Vector3> vertexesTriangles;
+//
+//    vertexesTriangles.push_back(verticesV3[0]);
+//    vertexesTriangles.push_back(verticesV3[1]);
+//    vertexesTriangles.push_back(verticesV3[2]);
+//
+//    vertexesTriangles.push_back(verticesV3[0]);
+//    vertexesTriangles.push_back(verticesV3[1]);
+//    vertexesTriangles.push_back(verticesV3[2]);
+//
+//}

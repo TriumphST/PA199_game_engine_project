@@ -153,6 +153,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Matrix3.cpp" />
     <ClCompile Include="Matrix4.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshGenerator.cpp" />
     <ClCompile Include="Polar2.cpp" />
     <ClCompile Include="Ray.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Gameobject.h" />
     <ClInclude Include="Matrix3.h" />
     <ClInclude Include="Matrix4.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="Polar2.h" />
     <ClInclude Include="Ray.h" />
