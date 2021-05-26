@@ -61,8 +61,6 @@ void Gameobject::render(float with, float height)
     Vector3 cameraUp = cameraDirection.cross(cameraRight); // glm::cross(cameraDirection, cameraRight);
     Matrix4 view = Matrix4::lookatMatrix(cameraRight, cameraUp, cameraDirection, cameraPos);
 
-    //Matrix4 view = Matrix4::translationMatrix(0.0f, 0.0f, -3.0f);
-
     // pass transformation matrices to the shader
     shaderProgram.setMat4("projection", projection.core);
     shaderProgram.setMat4("view", view.core);

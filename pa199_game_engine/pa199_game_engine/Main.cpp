@@ -18,6 +18,7 @@
 #include "Gameobject.h"
 #include "MeshGenerator.h"
 #include "Mesh.h"
+#include "Cylindrical3.h"
 
 # define M_PI           3.14159265358979323846
 
@@ -31,7 +32,10 @@ const unsigned int SCR_HEIGHT = 600;
 // game settings
 struct settings {
     float r_w; // radius walls
+    float d_w; // diameter of walls
     float r_p; // radius paddles
+    float d_p; // diameter of paddles
+    float phi_p; // angle (length) of paddles
     float r_g; // radius border
 } gameSettings;
 
@@ -143,8 +147,11 @@ int main()
 
     // game settings
     gameSettings.r_w = 5.0f;
+    gameSettings.d_w = 1.0f;
     gameSettings.r_p = 10.0f;
-    gameSettings.r_g = 11.0f;
+    gameSettings.d_p = 1.0f;
+    gameSettings.phi_p = 10.0f;
+    gameSettings.r_g = 12.0f;
 
     GLFWwindow* window = openWindow();
 
@@ -175,12 +182,18 @@ int main()
     squere.rotation = Vector3(toRadians(90.0f), 0.0f, 0.0f);
     cube.position = Vector3(-5.0f, 0.0f, 0.0f);
     //cube.scale = Vector3(0.5f, 0.5f, 0.5f);
-    cube1.position = Vector3(5.0f, 0.0f, 0.0f);
+    cube1.position = Vector3(10.0f, 0.0f, 0.0f);
     //cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
     //sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
     sphere.rotation = Vector3(toRadians(-90.0f), 0.0f, 0.0f);
     sphere.velocity = Vector3(0.01f, 0.0f, 0.0f);
+
+    std::vector<Gameobject*> wallGOs;
+    std::vector<Gameobject*> paddleGOs;
+
+    wallGOs.push_back(&cube);
+    paddleGOs.push_back(&cube1);
 
     GOs.push_back(&sphere);
     GOs.push_back(&squere);
@@ -198,6 +211,8 @@ int main()
         // input
         // -----
         processInput(window);
+
+        checkCollisions(&sphere, wallGOs, paddleGOs);
 
         sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, toRadians(1.0f * dt));
 
@@ -244,10 +259,46 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void checkCollisions(std::vector<Gameobject*> GOs)
-{
-    Gameobject* sphere = GOs[0];
+int angularDistance(int alpha, int beta) {
+    int phi = std::abs(beta - alpha) % 360;       // This is either the distance or 360 - distance
+    int distance = phi > 180 ? 360 - phi : phi;
+    return distance;
+}
 
+void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
+{   
+    // check broad collisions
+    Cylindrical3 speherePos = sphere->position.toCylindrical();
 
+    // from center to wall radius + helf of wall diameter + half of shere radius
+    if (speherePos.distance < gameSettings.r_w + (gameSettings.d_w / 2) + (sphere->scale.x / 5))
+    {
+        // check wall collision
+    }
+    else if (speherePos.distance > gameSettings.r_p - (gameSettings.d_p / 2) - (sphere->scale.x / 5))
+    {
+        // check paddle collision
+        int closestIndex = 0;
+        float closestAngle = 1000.0f;
+        for (int i = 0; i < paddleGOs.size(); i++)
+        {
+            Gameobject * paddle = paddleGOs[i];
+            Cylindrical3 paddlePos = paddle->position.toCylindrical();
+            float angleDiff = angularDistance(speherePos.angle, paddlePos.angle);
+            if (angleDiff < closestAngle) {
+                closestAngle = angleDiff;
+                closestIndex = i;
+            }
+        }
 
+        // check closest paddle collision
+        Gameobject* paddle = paddleGOs[closestIndex];
+        Cylindrical3 paddlePos = paddle->position.toCylindrical();
+        if (closestAngle <= gameSettings.phi_p && speherePos.distance >= ) {
+            // ball is colliding with the paddle
+            if (speherePos.distance < ) {
+
+            }
+        }
+    }
 }
