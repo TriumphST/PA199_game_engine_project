@@ -180,6 +180,8 @@
   <ItemGroup>
     <None Include="shaders\coordinate_system.fs" />
     <None Include="shaders\coordinate_system.vs" />
+    <None Include="shaders\phong.fs" />
+    <None Include="shaders\phong.vs" />
     <None Include="shaders\simpleFragment.fs" />
     <None Include="shaders\simpleVertex.vs" />
   </ItemGroup>

@@ -173,6 +173,26 @@ Matrix4 Matrix4::rotationMatrix(float Rx, float Ry, float Rz)
     return rotation;
 }
 
+Matrix4 Matrix4::lookatMatrix(Vector3 R, Vector3 U, Vector3 D, Vector3 P)
+{
+    float a[4][4] = {
+        {R.x,R.y,R.z,0},
+        {U.x,U.y,U.z,0},
+        {D.x,D.y,D.z,0},
+        {  0,  0,  0,1}
+    };
+    Matrix4 A = Matrix4(a);
+
+    float b[4][4] = {
+        {1,0,0,-P.x},
+        {0,1,0,-P.y},
+        {0,0,1,-P.z},
+        {0,0,0, 1}
+    };
+    Matrix4 B = Matrix4(b);
+    return A*B;
+}
+
 Matrix4 Matrix4::perspectiveMatrix(float angle, float ratio, float near, float far)
 {
     float tan_half_angle = tan(angle / 2);

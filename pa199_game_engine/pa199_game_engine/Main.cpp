@@ -28,6 +28,14 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+// game settings
+struct settings {
+    float r_w; // radius walls
+    float r_p; // radius paddles
+    float r_g; // radius border
+} gameSettings;
+
+
 std::vector<Vector3> squereVertices = {
         Vector3(-0.5f, -0.5f, 0.0f),   //0
         Vector3(0.5f, -0.5f, 0.0f),    //1
@@ -116,14 +124,14 @@ float toRadians(float x) {
     return 2 * M_PI * (x / 360);
 }
 
-void renderGOs(std::vector<Gameobject> GOs)
+void renderGOs(std::vector<Gameobject*> GOs)
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for (int i = 0; i < GOs.size(); i++)
     {
-        GOs[i].render((float)SCR_WIDTH, (float)SCR_HEIGHT);
+        GOs[i]->render((float)SCR_WIDTH, (float)SCR_HEIGHT);
     }
 }
 
@@ -133,15 +141,21 @@ int main()
     //t.runTests();
     //return 0;
 
+    // game settings
+    gameSettings.r_w = 5.0f;
+    gameSettings.r_p = 10.0f;
+    gameSettings.r_g = 11.0f;
+
     GLFWwindow* window = openWindow();
 
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Shader ourShader("shaders/phong.vs", "shaders/phong.fs");
 
-    std::vector<Gameobject> GOs;
+    std::vector<Gameobject*> GOs;
 
     Mesh triangleMesh = Mesh(triangleVertices, triangleIndexes);
     Mesh squereMesh = Mesh(squereVertices, squereIndexes);
@@ -151,22 +165,27 @@ int main()
     Gameobject triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject cube = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    //Gameobject cube1 = Gameobject(ourShader, cubeVertices, 5, 36, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject cube1 = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
     triangle.position = Vector3(0.0f, 1.0f, 0.0f);
-    triangle.scale = Vector3(0.5f, 0.5f, 0.5f);
+    //triangle.scale = Vector3(0.5f, 0.5f, 0.5f);
     squere.position = Vector3(-1.0f, 0.0f, 0.0f);
-    squere.scale = Vector3(0.5f, 0.5f, 0.5f);
-    squere.rotation = Vector3(0.0f, 0.0f, toRadians(30.0f));
-    cube.position = Vector3(1.0f, 0.0f, 0.0f);
-    cube.scale = Vector3(0.5f, 0.5f, 0.5f);
-    cube.rotation = Vector3(0.0f, -toRadians(45.0f), -toRadians(20.0f));
-    sphere.position = Vector3(0.0f, 0.0f, 0.0f);
-    sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
+    squere.scale = Vector3(4.0f, 4.0f, 4.0f);
+    squere.rotation = Vector3(toRadians(90.0f), 0.0f, 0.0f);
+    cube.position = Vector3(-5.0f, 0.0f, 0.0f);
+    //cube.scale = Vector3(0.5f, 0.5f, 0.5f);
+    cube1.position = Vector3(5.0f, 0.0f, 0.0f);
+    //cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
+    sphere.position = Vector3(1.0f, 0.0f, 0.0f);
+    //sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
     sphere.rotation = Vector3(toRadians(-90.0f), 0.0f, 0.0f);
+    sphere.velocity = Vector3(0.01f, 0.0f, 0.0f);
 
-
+    GOs.push_back(&sphere);
+    GOs.push_back(&squere);
+    GOs.push_back(&cube);
+    GOs.push_back(&cube1);
 
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
@@ -175,17 +194,17 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        dt = (std::chrono::high_resolution_clock::now() - lastTick).count()/1000;
+        dt = (std::chrono::high_resolution_clock::now() - lastTick).count()/1000.0f;
         // input
         // -----
         processInput(window);
 
         sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, toRadians(1.0f * dt));
-        GOs.clear();
-        GOs.push_back(triangle);
-        GOs.push_back(squere);
-        GOs.push_back(cube);
-        GOs.push_back(sphere);
+
+        for (int i = 0; i < GOs.size(); i++)
+        {
+            GOs[i]->update(dt);
+        }
 
         // rendering commands here
         renderGOs(GOs);
@@ -199,7 +218,7 @@ int main()
 
     for (int i = 0; i < GOs.size(); i++)
     {
-        GOs[i].clean();
+        GOs[i]->clean();
     }
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
@@ -223,4 +242,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+}
+
+void checkCollisions(std::vector<Gameobject*> GOs)
+{
+    Gameobject* sphere = GOs[0];
+
+
+
 }

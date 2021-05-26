@@ -39,13 +39,29 @@ float Gameobject::toRadians(float x) {
     return 2 * M_PI * (x / 360);
 }
 
+void Gameobject::update(float deltaTime)
+{
+    Vector3 tempPos = position + velocity;
+    this->position = tempPos;
+}
+
 void Gameobject::render(float with, float height)
 {
     shaderProgram.use();
 
     // create transformations
     Matrix4 projection = Matrix4::perspectiveMatrix(toRadians(45.0f), with / height, 0.1f, 100.0f);
-    Matrix4 view = Matrix4::translationMatrix(0.0f, 0.0f, -3.0f);
+
+    // camera settings
+    Vector3 cameraPos = Vector3(0.0f, 7.0f, 10.0f);
+    Vector3 cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
+    Vector3 cameraDirection = (cameraPos - cameraTarget).normalized();
+    Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
+    Vector3 cameraRight = up.cross(cameraDirection).normalized(); // glm::normalize(glm::cross(up, cameraDirection));
+    Vector3 cameraUp = cameraDirection.cross(cameraRight); // glm::cross(cameraDirection, cameraRight);
+    Matrix4 view = Matrix4::lookatMatrix(cameraRight, cameraUp, cameraDirection, cameraPos);
+
+    //Matrix4 view = Matrix4::translationMatrix(0.0f, 0.0f, -3.0f);
 
     // pass transformation matrices to the shader
     shaderProgram.setMat4("projection", projection.core);

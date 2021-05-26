@@ -24,6 +24,8 @@ public:
 	static Matrix4 translationMatrix(float Tx, float Ty, float Tz);
 	static Matrix4 rotationMatrix(float Rx, float Ry, float Rz);
 
+	static Matrix4 lookatMatrix(Vector3 R, Vector3 U, Vector3 D, Vector3 P);
+
 	// projection
 	static Matrix4 perspectiveMatrix(float angle, float ratio, float near, float far);
 };

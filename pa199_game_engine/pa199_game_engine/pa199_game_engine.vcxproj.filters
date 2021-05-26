@@ -115,5 +115,11 @@
     <None Include="shaders\coordinate_system.vs">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\phong.vs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\phong.fs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

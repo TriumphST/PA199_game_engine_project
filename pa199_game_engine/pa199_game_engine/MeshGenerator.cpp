@@ -99,6 +99,7 @@ Mesh MeshGenerator::Sphere(float radius)
         verticesV3.push_back(Vector3(vertices[i], vertices[i + 1], vertices[i + 2]));
     }
 
+    std::vector<Vector3> triangleNormals;
 
     return Mesh(verticesV3, indexes);
 }

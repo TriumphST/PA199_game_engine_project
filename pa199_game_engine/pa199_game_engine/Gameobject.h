@@ -20,6 +20,7 @@ public:
     Vector3 velocity;
     std::vector<float> vertices;
     
+    void update(float deltaTime);
     void render(float with, float height);
     void clean();
 
