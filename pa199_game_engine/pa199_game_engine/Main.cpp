@@ -37,6 +37,7 @@ struct settings {
     float d_p; // diameter of paddles
     float phi_p; // angle (length) of paddles
     float r_g; // radius border
+    float ballSpeed; // radius border
 } gameSettings;
 
 
@@ -139,6 +140,53 @@ void renderGOs(std::vector<Gameobject*> GOs)
     }
 }
 
+int angularDistance(int alpha, int beta) {
+    int phi = std::abs(beta - alpha) % 360;       // This is either the distance or 360 - distance
+    int distance = phi > 180 ? 360 - phi : phi;
+    return distance;
+}
+
+void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
+{
+    // check broad collisions
+    Cylindrical3 speherePos = sphere->position.toCylindrical();
+
+    // from center to wall radius + helf of wall diameter + half of shere radius
+    if (speherePos.distance < gameSettings.r_w + (gameSettings.d_w / 2) + (sphere->scale.x / 5))
+    {
+        // check wall collision
+    }
+    else if (speherePos.distance > gameSettings.r_p - (gameSettings.d_p / 2) - (sphere->scale.x / 5))
+    {
+        // check paddle collision
+        int closestIndex = 0;
+        float closestAngle = 1000.0f;
+        for (int i = 0; i < paddleGOs.size(); i++)
+        {
+            Gameobject* paddle = paddleGOs[i];
+            Cylindrical3 paddlePos = paddle->position.toCylindrical();
+            float angleDiff = angularDistance(speherePos.angle, paddlePos.angle);
+            if (angleDiff < closestAngle) {
+                closestAngle = angleDiff;
+                closestIndex = i;
+            }
+        }
+
+        // check closest paddle collision
+        Gameobject* paddle = paddleGOs[closestIndex];
+        Cylindrical3 paddlePos = paddle->position.toCylindrical();
+        if (closestAngle <= gameSettings.phi_p) {
+            // ball is colliding with the paddle
+            float dir = 1.0f;
+            if (speherePos.distance < gameSettings.r_p) {
+                dir = -1.0f;
+            }
+            Vector3 n = sphere->position.normalized() * dir;
+            sphere->velocity = n*gameSettings.ballSpeed;
+        }
+    }
+}
+
 int main()
 {
     //Test t = Test();
@@ -152,6 +200,7 @@ int main()
     gameSettings.d_p = 1.0f;
     gameSettings.phi_p = 10.0f;
     gameSettings.r_g = 12.0f;
+    gameSettings.ballSpeed = 0.01f;
 
     GLFWwindow* window = openWindow();
 
@@ -180,7 +229,7 @@ int main()
     squere.position = Vector3(-1.0f, 0.0f, 0.0f);
     squere.scale = Vector3(4.0f, 4.0f, 4.0f);
     squere.rotation = Vector3(toRadians(90.0f), 0.0f, 0.0f);
-    cube.position = Vector3(-5.0f, 0.0f, 0.0f);
+    cube.position = Vector3(-10.0f, 0.0f, 0.0f);
     //cube.scale = Vector3(0.5f, 0.5f, 0.5f);
     cube1.position = Vector3(10.0f, 0.0f, 0.0f);
     //cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
@@ -257,48 +306,4 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
-}
-
-int angularDistance(int alpha, int beta) {
-    int phi = std::abs(beta - alpha) % 360;       // This is either the distance or 360 - distance
-    int distance = phi > 180 ? 360 - phi : phi;
-    return distance;
-}
-
-void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
-{   
-    // check broad collisions
-    Cylindrical3 speherePos = sphere->position.toCylindrical();
-
-    // from center to wall radius + helf of wall diameter + half of shere radius
-    if (speherePos.distance < gameSettings.r_w + (gameSettings.d_w / 2) + (sphere->scale.x / 5))
-    {
-        // check wall collision
-    }
-    else if (speherePos.distance > gameSettings.r_p - (gameSettings.d_p / 2) - (sphere->scale.x / 5))
-    {
-        // check paddle collision
-        int closestIndex = 0;
-        float closestAngle = 1000.0f;
-        for (int i = 0; i < paddleGOs.size(); i++)
-        {
-            Gameobject * paddle = paddleGOs[i];
-            Cylindrical3 paddlePos = paddle->position.toCylindrical();
-            float angleDiff = angularDistance(speherePos.angle, paddlePos.angle);
-            if (angleDiff < closestAngle) {
-                closestAngle = angleDiff;
-                closestIndex = i;
-            }
-        }
-
-        // check closest paddle collision
-        Gameobject* paddle = paddleGOs[closestIndex];
-        Cylindrical3 paddlePos = paddle->position.toCylindrical();
-        if (closestAngle <= gameSettings.phi_p && speherePos.distance >= ) {
-            // ball is colliding with the paddle
-            if (speherePos.distance < ) {
-
-            }
-        }
-    }
 }

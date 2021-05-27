@@ -53,7 +53,7 @@ void Gameobject::render(float with, float height)
     Matrix4 projection = Matrix4::perspectiveMatrix(toRadians(45.0f), with / height, 0.1f, 100.0f);
 
     // camera settings
-    Vector3 cameraPos = Vector3(0.0f, 7.0f, 10.0f);
+    Vector3 cameraPos = Vector3(0.0f, 7.0f, 30.0f);
     Vector3 cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
     Vector3 cameraDirection = (cameraPos - cameraTarget).normalized();
     Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
