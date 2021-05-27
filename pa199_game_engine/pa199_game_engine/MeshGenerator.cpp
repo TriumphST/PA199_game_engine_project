@@ -104,6 +104,114 @@ Mesh MeshGenerator::Sphere(float radius)
     return Mesh(verticesV3, indexes);
 }
 
+Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
+{
+    std::vector<Vector3> vertices;
+    std::vector<unsigned int> indexes;
+
+    float angleBetweenVertexes = (phi * 2) / numOfLineVertexes;
+
+    // top near row
+    Cylindrical3 vertexPos = Cylindrical3(10.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
+    for (int i = 0; i < numOfLineVertexes; i++)
+    {
+        vertices.push_back(vertexPos.toCartesian());
+        vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+    }
+    vertices.push_back(vertexPos.toCartesian());
+
+    // top far row
+    vertexPos = Cylindrical3(11.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
+    for (int i = 0; i < numOfLineVertexes; i++)
+    {
+        vertices.push_back(vertexPos.toCartesian());
+        vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+    }
+    vertices.push_back(vertexPos.toCartesian());
+
+    // bottom near row
+    vertexPos = Cylindrical3(10.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
+    for (int i = 0; i < numOfLineVertexes; i++)
+    {
+        vertices.push_back(vertexPos.toCartesian());
+        vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+    }
+    vertices.push_back(vertexPos.toCartesian());
+
+    // bottom far row
+    vertexPos = Cylindrical3(11.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
+    for (int i = 0; i < numOfLineVertexes; i++)
+    {
+        vertices.push_back(vertexPos.toCartesian());
+        vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+    }
+    vertices.push_back(vertexPos.toCartesian());
+
+    int bottomStartIndex = (numOfLineVertexes * 2) + 2;
+    for (int i = 0; i < numOfLineVertexes; i++)
+    {
+        // top
+        indexes.push_back(i + 0);
+        indexes.push_back(i + 1);
+        indexes.push_back(i + 1 + numOfLineVertexes); // 11
+
+        indexes.push_back(i + 1);
+        indexes.push_back(i + 1 + numOfLineVertexes); // 11
+        indexes.push_back(i + 2 + numOfLineVertexes); // 12
+
+        // bottom
+        indexes.push_back(bottomStartIndex + i + 0); //22
+        indexes.push_back(bottomStartIndex + i + 1); //23
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+
+        indexes.push_back(bottomStartIndex + i + 1);
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
+
+        // front
+        indexes.push_back(i + 0);
+        indexes.push_back(i + 1);
+        indexes.push_back(bottomStartIndex + i + 0);
+
+        indexes.push_back(i + 1);
+        indexes.push_back(bottomStartIndex + i + 0);
+        indexes.push_back(bottomStartIndex + i + 1);
+
+        // back
+        indexes.push_back(i + 1 + numOfLineVertexes);
+        indexes.push_back(i + 2 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+
+        indexes.push_back(i + 2 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
+    }
+    // first side
+    indexes.push_back(0);
+    indexes.push_back(1 + numOfLineVertexes);
+    indexes.push_back(bottomStartIndex + 0);
+
+    indexes.push_back(1 + numOfLineVertexes);
+    indexes.push_back(bottomStartIndex + 0);
+    indexes.push_back(bottomStartIndex + 1 + numOfLineVertexes);
+
+    // last side
+    indexes.push_back(numOfLineVertexes); //10
+    indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
+    indexes.push_back(bottomStartIndex - 1); //21
+
+    indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
+    indexes.push_back(bottomStartIndex - 1); //21
+    indexes.push_back(bottomStartIndex + 2* numOfLineVertexes + 1); //43
+
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        vertices[i].x -= 10.5;
+    }
+
+    return Mesh(vertices, indexes);
+}
+
 //std::vector<float> MeshGenerator::SphereGLTriangles(float radius)
 //{
 //    std::vector<Vector3> verticesV3 = Sphere(radius);

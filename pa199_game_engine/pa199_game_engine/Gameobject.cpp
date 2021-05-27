@@ -58,7 +58,7 @@ void Gameobject::render(float with, float height, int cameraMode)
     }
     else if (cameraMode == 2)
     {
-        cameraPos = Vector3(0.0f, 20.0f, 0.000001f);
+        cameraPos = Vector3(0.0f, 30.0f, 0.000001f);
     }
     Vector3 cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
     Vector3 cameraDirection = (cameraPos - cameraTarget).normalized();
@@ -83,7 +83,9 @@ void Gameobject::render(float with, float height, int cameraMode)
     model = model * rotCenter * transM * scaleM * rotM;
     shaderProgram.setMat4("model", model.core);
 
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+    //glDrawArrays(GL_POINTS, 0, mesh.GetMeshVertexes().size());
     // Index buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glDrawElements(

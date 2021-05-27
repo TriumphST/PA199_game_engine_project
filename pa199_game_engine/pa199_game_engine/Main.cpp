@@ -19,8 +19,7 @@
 #include "MeshGenerator.h"
 #include "Mesh.h"
 #include "Cylindrical3.h"
-
-# define M_PI           3.14159265358979323846
+#include "Helper.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -129,10 +128,6 @@ GLFWwindow* openWindow() {
     return window;
 }
 
-float toRadians(float x) {
-    return 2 * M_PI * (x / 360);
-}
-
 void renderGOs(std::vector<Gameobject*> GOs)
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -202,7 +197,7 @@ int main()
     gameSettings.d_w = 1.0f;
     gameSettings.r_p = 10.0f;
     gameSettings.d_p = 1.0f;
-    gameSettings.phi_p = 10.0f;
+    gameSettings.phi_p = 20.0f;
     gameSettings.r_g = 12.0f;
     gameSettings.ballSpeed = 0.01f;
     gameSettings.paddleRotationSpeed = 0.5f;
@@ -222,33 +217,36 @@ int main()
     Mesh squereMesh = Mesh(squereVertices, squereIndexes);
     Mesh cubeMesh = Mesh(cubeVertices, cubeIndexes);
     Mesh sphereMesh = MeshGenerator::Sphere(1.0f);
+    Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_p, 10);
 
-    Gameobject triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    // triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject cube = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject cube1 = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Gameobject cube = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    //Gameobject cube1 = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject paddle1 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject paddle2 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
-    triangle.position = Vector3(0.0f, 1.0f, 0.0f);
     squere.position = Vector3(-1.0f, 0.0f, 0.0f);
     squere.scale = Vector3(4.0f, 4.0f, 4.0f);
-    squere.rotation = Vector3(toRadians(90.0f), 0.0f, 0.0f);
-    cube.position = Vector3(-10.0f, 0.0f, 0.0f);
-    cube1.position = Vector3(10.0f, 0.0f, 0.0f);
+    squere.rotation = Vector3(Helper::toRadians(90.0f), 0.0f, 0.0f);
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    sphere.rotation = Vector3(toRadians(-90.0f), 0.0f, 0.0f);
+    sphere.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     sphere.velocity = Vector3(0.01f, 0.0f, 0.0f);
+    paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle1.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
+    paddle2.position = Vector3(-10.0f, 0.0f, 0.0f);
+    paddle2.rotation = Vector3(Helper::toRadians(-90.0f), Helper::toRadians(180.0f), 0.0f);
 
     std::vector<Gameobject*> wallGOs;
     std::vector<Gameobject*> paddleGOs;
 
-    paddleGOs.push_back(&cube);
-    paddleGOs.push_back(&cube1);
+    paddleGOs.push_back(&paddle1);
+    paddleGOs.push_back(&paddle2);
 
     GOs.push_back(&sphere);
-    GOs.push_back(&squere);
-    GOs.push_back(&cube);
-    GOs.push_back(&cube1);
+    GOs.push_back(&paddle1);
+    GOs.push_back(&paddle2);
 
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
@@ -264,14 +262,14 @@ int main()
 
         checkCollisions(&sphere, wallGOs, paddleGOs);
 
-        sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, toRadians(1.0f * dt));
+        sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
 
         for (int i = 0; i < paddleGOs.size(); i++)
         {
             if (paddleRotation == -1.0f) {
                 int a = 0;
             }
-            paddleGOs[i]->rotationAroundCenter.y += paddleRotation* toRadians(1.0f * dt);
+            paddleGOs[i]->rotationAroundCenter.y += paddleRotation* Helper::toRadians(1.0f * dt);
         }
 
         for (int i = 0; i < GOs.size(); i++)
