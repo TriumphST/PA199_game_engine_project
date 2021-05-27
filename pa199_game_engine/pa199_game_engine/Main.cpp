@@ -36,11 +36,13 @@ struct settings {
     float r_p; // radius paddles
     float d_p; // diameter of paddles
     float phi_p; // angle (length) of paddles
+    float paddleRotationSpeed; // angle (length) of paddles
     float r_g; // radius border
     float ballSpeed; // radius border
 } gameSettings;
 
 int cameraMode = 1;
+float paddleRotation = 0.0f;
 
 
 std::vector<Vector3> squereVertices = {
@@ -203,6 +205,7 @@ int main()
     gameSettings.phi_p = 10.0f;
     gameSettings.r_g = 12.0f;
     gameSettings.ballSpeed = 0.01f;
+    gameSettings.paddleRotationSpeed = 0.5f;
 
     GLFWwindow* window = openWindow();
 
@@ -227,23 +230,19 @@ int main()
     Gameobject sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
     triangle.position = Vector3(0.0f, 1.0f, 0.0f);
-    //triangle.scale = Vector3(0.5f, 0.5f, 0.5f);
     squere.position = Vector3(-1.0f, 0.0f, 0.0f);
     squere.scale = Vector3(4.0f, 4.0f, 4.0f);
     squere.rotation = Vector3(toRadians(90.0f), 0.0f, 0.0f);
     cube.position = Vector3(-10.0f, 0.0f, 0.0f);
-    //cube.scale = Vector3(0.5f, 0.5f, 0.5f);
     cube1.position = Vector3(10.0f, 0.0f, 0.0f);
-    //cube1.scale = Vector3(0.5f, 0.5f, 0.5f);
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    //sphere.scale = Vector3(0.5f, 0.5f, 0.5f);
     sphere.rotation = Vector3(toRadians(-90.0f), 0.0f, 0.0f);
     sphere.velocity = Vector3(0.01f, 0.0f, 0.0f);
 
     std::vector<Gameobject*> wallGOs;
     std::vector<Gameobject*> paddleGOs;
 
-    wallGOs.push_back(&cube);
+    paddleGOs.push_back(&cube);
     paddleGOs.push_back(&cube1);
 
     GOs.push_back(&sphere);
@@ -266,6 +265,14 @@ int main()
         checkCollisions(&sphere, wallGOs, paddleGOs);
 
         sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, toRadians(1.0f * dt));
+
+        for (int i = 0; i < paddleGOs.size(); i++)
+        {
+            if (paddleRotation == -1.0f) {
+                int a = 0;
+            }
+            paddleGOs[i]->rotationAroundCenter.y += paddleRotation* toRadians(1.0f * dt);
+        }
 
         for (int i = 0; i < GOs.size(); i++)
         {
@@ -303,6 +310,22 @@ void processInput(GLFWwindow* window)
         cameraMode = 1;
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
         cameraMode = 2;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        if (paddleRotation == 0.0f)
+            paddleRotation = -1.0f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
+        if (paddleRotation == -1.0f) 
+            paddleRotation = 0.0f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        if(paddleRotation == 0.0f)
+            paddleRotation = 1.0f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE) {
+        if (paddleRotation == 1.0f)
+            paddleRotation = 0.0f;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

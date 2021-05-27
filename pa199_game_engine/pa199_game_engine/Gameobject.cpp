@@ -41,8 +41,7 @@ float Gameobject::toRadians(float x) {
 
 void Gameobject::update(float deltaTime)
 {
-    Vector3 tempPos = position + velocity;
-    this->position = tempPos;
+    this->position = position + velocity;
 }
 
 void Gameobject::render(float with, float height, int cameraMode)
@@ -78,8 +77,10 @@ void Gameobject::render(float with, float height, int cameraMode)
     Matrix4 scaleM = Matrix4::scaleMatrix(scale.x, scale.y, scale.z);
     Matrix4 rotM = Matrix4::rotationMatrix(rotation.x, rotation.y, rotation.z);
 
+    Matrix4 rotCenter = Matrix4::rotationMatrix(rotationAroundCenter.x, rotationAroundCenter.y, rotationAroundCenter.z);
+
     Matrix4 model = Matrix4(1.0f);
-    model = model * transM * scaleM * rotM;
+    model = model * rotCenter * transM * scaleM * rotM;
     shaderProgram.setMat4("model", model.core);
 
     //glDrawArrays(GL_TRIANGLES, 0, 3);

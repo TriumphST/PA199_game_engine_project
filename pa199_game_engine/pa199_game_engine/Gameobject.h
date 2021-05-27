@@ -16,6 +16,7 @@ public:
 
     Vector3 position;
     Vector3 rotation;
+    Vector3 rotationAroundCenter;
     Vector3 scale;
     Vector3 velocity;
     std::vector<float> vertices;
