@@ -21,7 +21,7 @@ public:
     std::vector<float> vertices;
     
     void update(float deltaTime);
-    void render(float with, float height);
+    void render(float with, float height, int cameraMode);
     void clean();
 
 private:

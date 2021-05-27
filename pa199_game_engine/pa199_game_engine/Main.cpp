@@ -40,6 +40,8 @@ struct settings {
     float ballSpeed; // radius border
 } gameSettings;
 
+int cameraMode = 1;
+
 
 std::vector<Vector3> squereVertices = {
         Vector3(-0.5f, -0.5f, 0.0f),   //0
@@ -136,7 +138,7 @@ void renderGOs(std::vector<Gameobject*> GOs)
 
     for (int i = 0; i < GOs.size(); i++)
     {
-        GOs[i]->render((float)SCR_WIDTH, (float)SCR_HEIGHT);
+        GOs[i]->render((float)SCR_WIDTH, (float)SCR_HEIGHT, cameraMode);
     }
 }
 
@@ -297,6 +299,10 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+        cameraMode = 1;
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+        cameraMode = 2;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
