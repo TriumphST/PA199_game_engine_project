@@ -10,6 +10,7 @@ public:
 
 	Vector3();
 	Vector3(float x, float y, float z);
+	Vector3(float all);
 
 	float magnitude();
 	Vector3 normalized();

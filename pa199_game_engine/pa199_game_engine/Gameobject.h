@@ -10,6 +10,7 @@
 class Gameobject
 {
 public:
+    Gameobject() {};
     Gameobject(Shader shaderProgram, Mesh mesh, std::string vertexShaderPath, std::string fragmentShaderPath);
 
     float toRadians(float x);

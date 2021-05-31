@@ -69,17 +69,18 @@ Matrix4 Matrix4::operator*(const Matrix4& other)
     return results;
 }
 
-Matrix4 Matrix4::operator*(const Vector3& other)
+Vector3 Matrix4::operator*(const Vector3& other)
 {
-    Matrix4 results = Matrix4();
+    float results[4] = {0};
     float vec4[4] = { other.x, other.y, other.z, 1 };
 
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++) {
-            for (int u = 0; u < 4; u++)
-                results[i][j] += core[i][u] * vec4[j];
+            results[i] += core[i][j] * vec4[j];
         }
-    return results;
+
+    Vector3 v3 = Vector3(results[0], results[1], results[2]);
+    return v3;
 }
 
 Matrix4 Matrix4::operator+(const Matrix4& other)

@@ -5,3 +5,7 @@
 float Helper::toRadians(float x) {
     return 2 * M_PI * (x / 360);
 }
+
+float Helper::toDegrees(float x) {
+    return (x * 180)/ M_PI;
+}

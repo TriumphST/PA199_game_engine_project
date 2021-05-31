@@ -15,6 +15,13 @@ Vector3::Vector3(float x, float y, float z)
 	this->z = z;
 }
 
+Vector3::Vector3(float all)
+{
+	this->x = all;
+	this->y = all;
+	this->z = all;
+}
+
 float Vector3::magnitude()
 {
 	return sqrt(x * x + y * y + z * z);
@@ -59,9 +66,10 @@ float Vector3::dot(const Vector3 other)
 
 Cylindrical3 Vector3::toCylindrical()
 {
-	float r = sqrt((x * x) + (y * y));
-	float angle = atan(y / x);
-	Cylindrical3 res = Cylindrical3(r, angle, z);
+	// y and z are inverted
+	float r = sqrt((x * x) + (z * z));
+	float angle = atan(z / x);
+	Cylindrical3 res = Cylindrical3(r, angle, y);
 	return res;
 	return Cylindrical3();
 }

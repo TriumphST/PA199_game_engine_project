@@ -25,23 +25,26 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
+const unsigned int SCradius_wallIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // game settings
 struct settings {
-    float r_w; // radius walls
-    float d_w; // diameter of walls
-    float r_p; // radius paddles
-    float d_p; // diameter of paddles
-    float phi_p; // angle (length) of paddles
+    float radius_wall; // radius walls
+    float diameter_wall; // diameter of walls
+    float radius_paddles; // radius paddles
+    float diameter_paddles; // diameter of paddles
+    float phi_paddles; // angle (length) of paddles
     float paddleRotationSpeed; // angle (length) of paddles
-    float r_g; // radius border
-    float ballSpeed; // radius border
+    float radius_border; // radius border
+    float ballSpeed;
 } gameSettings;
 
 int cameraMode = 1;
 float paddleRotation = 0.0f;
+bool isBallReadyToFire = true;
+
+Gameobject sphere;
 
 
 std::vector<Vector3> squereVertices = {
@@ -107,7 +110,7 @@ GLFWwindow* openWindow() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCradius_wallIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -135,7 +138,7 @@ void renderGOs(std::vector<Gameobject*> GOs)
 
     for (int i = 0; i < GOs.size(); i++)
     {
-        GOs[i]->render((float)SCR_WIDTH, (float)SCR_HEIGHT, cameraMode);
+        GOs[i]->render((float)SCradius_wallIDTH, (float)SCR_HEIGHT, cameraMode);
     }
 }
 
@@ -145,17 +148,41 @@ int angularDistance(int alpha, int beta) {
     return distance;
 }
 
+void resetBall(Gameobject* sphere, Gameobject* paddleGO)
+{
+    Vector3 vectorCenter = paddleGO->position.normalized()*-1;
+    sphere->position = paddleGO->position + vectorCenter;
+    sphere->velocity = Vector3(0.0f);
+    isBallReadyToFire = true;
+}
+
+void fireBall()
+{
+    if(isBallReadyToFire == false) {
+        return;
+    }
+    Vector3 vectorCenter = sphere.position.normalized() * -gameSettings.ballSpeed;
+    sphere.velocity = vectorCenter;
+    isBallReadyToFire = false;
+}
+
 void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
 {
     // check broad collisions
     Cylindrical3 speherePos = sphere->position.toCylindrical();
 
+    if (speherePos.distance > gameSettings.radius_border + (sphere->scale.x / 5))
+    {
+        // ball is out of game area
+        resetBall(sphere, paddleGOs[0]);
+    }
+
     // from center to wall radius + helf of wall diameter + half of shere radius
-    if (speherePos.distance < gameSettings.r_w + (gameSettings.d_w / 2) + (sphere->scale.x / 5))
+    if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 5))
     {
         // check wall collision
     }
-    else if (speherePos.distance > gameSettings.r_p - (gameSettings.d_p / 2) - (sphere->scale.x / 5))
+    else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2) - (sphere->scale.x / 5))
     {
         // check paddle collision
         int closestIndex = 0;
@@ -164,7 +191,7 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
         {
             Gameobject* paddle = paddleGOs[i];
             Cylindrical3 paddlePos = paddle->position.toCylindrical();
-            float angleDiff = angularDistance(speherePos.angle, paddlePos.angle);
+            float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(paddlePos.angle));
             if (angleDiff < closestAngle) {
                 closestAngle = angleDiff;
                 closestIndex = i;
@@ -174,10 +201,10 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
         // check closest paddle collision
         Gameobject* paddle = paddleGOs[closestIndex];
         Cylindrical3 paddlePos = paddle->position.toCylindrical();
-        if (closestAngle <= gameSettings.phi_p) {
+        if (closestAngle <= gameSettings.phi_paddles) {
             // ball is colliding with the paddle
             float dir = 1.0f;
-            if (speherePos.distance < gameSettings.r_p) {
+            if (speherePos.distance < gameSettings.radius_paddles) {
                 dir = -1.0f;
             }
             Vector3 n = sphere->position.normalized() * dir;
@@ -193,13 +220,13 @@ int main()
     //return 0;
 
     // game settings
-    gameSettings.r_w = 5.0f;
-    gameSettings.d_w = 1.0f;
-    gameSettings.r_p = 10.0f;
-    gameSettings.d_p = 1.0f;
-    gameSettings.phi_p = 20.0f;
-    gameSettings.r_g = 12.0f;
-    gameSettings.ballSpeed = 0.01f;
+    gameSettings.radius_wall = 5.0f;
+    gameSettings.diameter_wall = 1.0f;
+    gameSettings.radius_paddles = 10.0f;
+    gameSettings.diameter_paddles = 1.0f;
+    gameSettings.phi_paddles = 20.0f;
+    gameSettings.radius_border = 12.0f;
+    gameSettings.ballSpeed = 0.03f;
     gameSettings.paddleRotationSpeed = 0.5f;
 
     GLFWwindow* window = openWindow();
@@ -217,13 +244,13 @@ int main()
     Mesh squereMesh = Mesh(squereVertices, squereIndexes);
     Mesh cubeMesh = Mesh(cubeVertices, cubeIndexes);
     Mesh sphereMesh = MeshGenerator::Sphere(1.0f);
-    Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_p, 10);
+    Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10);
 
     // triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     //Gameobject cube = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     //Gameobject cube1 = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle1 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle2 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
@@ -231,12 +258,11 @@ int main()
     squere.scale = Vector3(4.0f, 4.0f, 4.0f);
     squere.rotation = Vector3(Helper::toRadians(90.0f), 0.0f, 0.0f);
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    sphere.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
-    sphere.velocity = Vector3(0.01f, 0.0f, 0.0f);
+    //sphere.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle1.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
+    //paddle1.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     paddle2.position = Vector3(-10.0f, 0.0f, 0.0f);
-    paddle2.rotation = Vector3(Helper::toRadians(-90.0f), Helper::toRadians(180.0f), 0.0f);
+    paddle2.rotation = Vector3(0.0f, Helper::toRadians(180.0f), 0.0f);
 
     std::vector<Gameobject*> wallGOs;
     std::vector<Gameobject*> paddleGOs;
@@ -247,6 +273,8 @@ int main()
     GOs.push_back(&sphere);
     GOs.push_back(&paddle1);
     GOs.push_back(&paddle2);
+
+    resetBall(&sphere, paddleGOs[0]);
 
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
@@ -266,10 +294,8 @@ int main()
 
         for (int i = 0; i < paddleGOs.size(); i++)
         {
-            if (paddleRotation == -1.0f) {
-                int a = 0;
-            }
-            paddleGOs[i]->rotationAroundCenter.y += paddleRotation* Helper::toRadians(1.0f * dt);
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
+            paddleGOs[i]->position = rotCenter * paddleGOs[i]->position;
         }
 
         for (int i = 0; i < GOs.size(); i++)
@@ -304,6 +330,9 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+        
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        fireBall();
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         cameraMode = 1;
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)

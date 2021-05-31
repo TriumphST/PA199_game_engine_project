@@ -13,7 +13,7 @@ public:
 	bool operator==(const Matrix4& other);
 	float* operator[](const int& row);
 	Matrix4 operator*(const Matrix4& scalar);
-	Matrix4 operator*(const Vector3& vec);
+	Vector3 operator*(const Vector3& vec);
 	Matrix4 operator+(const Matrix4& other);
 	Matrix4 operator-(const Matrix4& other);
 	Matrix4 transpose();
