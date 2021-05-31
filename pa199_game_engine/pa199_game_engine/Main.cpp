@@ -38,13 +38,18 @@ struct settings {
     float paddleRotationSpeed; // angle (length) of paddles
     float radius_border; // radius border
     float ballSpeed;
+    int maxLives;
 } gameSettings;
 
 int cameraMode = 1;
 float paddleRotation = 0.0f;
 bool isBallReadyToFire = true;
+int currentLives = gameSettings.maxLives;
+bool isGameOver = false;
 
 Gameobject sphere;
+std::vector<Gameobject*> wallGOs;
+std::vector<Gameobject*> paddleGOs;
 
 
 std::vector<Vector3> squereVertices = {
@@ -148,11 +153,11 @@ int angularDistance(int alpha, int beta) {
     return distance;
 }
 
-void resetBall(Gameobject* sphere, Gameobject* paddleGO)
+void resetBall()
 {
-    Vector3 vectorCenter = paddleGO->position.normalized()*-1;
-    sphere->position = paddleGO->position + vectorCenter;
-    sphere->velocity = Vector3(0.0f);
+    Vector3 vectorCenter = paddleGOs[0]->position.normalized()*-1;
+    sphere.position = paddleGOs[0]->position + vectorCenter;
+    sphere.velocity = Vector3(0.0f);
     isBallReadyToFire = true;
 }
 
@@ -166,6 +171,12 @@ void fireBall()
     isBallReadyToFire = false;
 }
 
+void restartGame() {
+    isGameOver = false;
+    resetBall();
+    currentLives = gameSettings.maxLives;
+}
+
 void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
 {
     // check broad collisions
@@ -174,7 +185,14 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
     if (speherePos.distance > gameSettings.radius_border + (sphere->scale.x / 5))
     {
         // ball is out of game area
-        resetBall(sphere, paddleGOs[0]);
+        currentLives--;
+        std::cout << "Current lives: " << currentLives << std::endl;
+        if (currentLives <= 0) {
+            std::cout << "Game Over!" << std::endl;
+            std::cout << "Press ENTER to restart the game" << std::endl;
+            isGameOver = true;
+        }
+        resetBall();
     }
 
     // from center to wall radius + helf of wall diameter + half of shere radius
@@ -228,6 +246,13 @@ int main()
     gameSettings.radius_border = 12.0f;
     gameSettings.ballSpeed = 0.03f;
     gameSettings.paddleRotationSpeed = 0.5f;
+    gameSettings.maxLives = 3;
+
+
+    currentLives = gameSettings.maxLives;
+
+    std::cout << "Game starts!" << std::endl;
+    std::cout << "Current lives: " << currentLives << std::endl;
 
     GLFWwindow* window = openWindow();
 
@@ -246,26 +271,14 @@ int main()
     Mesh sphereMesh = MeshGenerator::Sphere(1.0f);
     Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10);
 
-    // triangle = Gameobject(ourShader, triangleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    //Gameobject cube = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    //Gameobject cube1 = Gameobject(ourShader, cubeMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle1 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle2 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
-    squere.position = Vector3(-1.0f, 0.0f, 0.0f);
-    squere.scale = Vector3(4.0f, 4.0f, 4.0f);
-    squere.rotation = Vector3(Helper::toRadians(90.0f), 0.0f, 0.0f);
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    //sphere.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
-    //paddle1.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     paddle2.position = Vector3(-10.0f, 0.0f, 0.0f);
-    //paddle2.rotation = Vector3(0.0f, Helper::toRadians(180.0f), 0.0f);
-
-    std::vector<Gameobject*> wallGOs;
-    std::vector<Gameobject*> paddleGOs;
 
     paddleGOs.push_back(&paddle1);
     paddleGOs.push_back(&paddle2);
@@ -274,7 +287,7 @@ int main()
     GOs.push_back(&paddle1);
     GOs.push_back(&paddle2);
 
-    resetBall(&sphere, paddleGOs[0]);
+    resetBall();
 
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
@@ -291,6 +304,12 @@ int main()
         checkCollisions(&sphere, wallGOs, paddleGOs);
 
         sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
+
+        if (isBallReadyToFire == true) 
+        {
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
+            sphere.position = rotCenter * sphere.position;
+        }
 
         for (int i = 0; i < paddleGOs.size(); i++)
         {
@@ -333,6 +352,12 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+        if (isGameOver == true) {
+            restartGame();
+        }
+    }
         
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
         fireBall();
