@@ -262,7 +262,7 @@ int main()
     paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
     //paddle1.rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
     paddle2.position = Vector3(-10.0f, 0.0f, 0.0f);
-    paddle2.rotation = Vector3(0.0f, Helper::toRadians(180.0f), 0.0f);
+    //paddle2.rotation = Vector3(0.0f, Helper::toRadians(180.0f), 0.0f);
 
     std::vector<Gameobject*> wallGOs;
     std::vector<Gameobject*> paddleGOs;
@@ -296,6 +296,9 @@ int main()
         {
             Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
             paddleGOs[i]->position = rotCenter * paddleGOs[i]->position;
+            float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), paddleGOs[i]->position.normalized());
+            //std::cout << i << ": " << Helper::toDegrees(angleY) << std::endl;
+            paddleGOs[i]->rotation.y = -angleY;
         }
 
         for (int i = 0; i < GOs.size(); i++)
