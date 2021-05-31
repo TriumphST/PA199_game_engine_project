@@ -275,17 +275,30 @@ int main()
     sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle1 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Gameobject paddle2 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject paddle3 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
     paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle2.position = Vector3(-10.0f, 0.0f, 0.0f);
+    paddle2.position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle3.position = Vector3(10.0f, 0.0f, 0.0f);
+
+    Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
+    paddle1.position = rotCenter1 * paddle1.position;
+
+    Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
+    paddle2.position = rotCenter2 * paddle2.position;
+
+    Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
+    paddle3.position = rotCenter3 * paddle3.position;
 
     paddleGOs.push_back(&paddle1);
     paddleGOs.push_back(&paddle2);
+    paddleGOs.push_back(&paddle3);
 
     GOs.push_back(&sphere);
     GOs.push_back(&paddle1);
     GOs.push_back(&paddle2);
+    GOs.push_back(&paddle3);
 
     resetBall();
 
