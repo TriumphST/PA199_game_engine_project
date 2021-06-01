@@ -2,7 +2,7 @@
 #include "Matrix4.h"
 # define M_PI           3.14159265358979323846
 
-Gameobject::Gameobject(Shader shaderProgram, Mesh mesh, std::string vertexShaderPath, std::string fragmentShaderPath)
+Gameobject::Gameobject(Shader shaderProgram, Mesh mesh)
 {
     this->mesh = mesh;
     this->triangles = triangles;

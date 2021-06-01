@@ -30,15 +30,17 @@ const unsigned int SCR_HEIGHT = 600;
 
 // game settings
 struct settings {
-    float radius_wall; // radius walls
-    float diameter_wall; // diameter of walls
-    float radius_paddles; // radius paddles
-    float diameter_paddles; // diameter of paddles
+    float radius_wall;
+    float diameter_wall;
+    float radius_paddles;
+    float diameter_paddles;
     float phi_paddles; // angle (length) of paddles
     float paddleRotationSpeed; // angle (length) of paddles
-    float radius_border; // radius border
+    float radius_border;
     float ballSpeed;
     int maxLives;
+    int numOfWallSegments;
+    int numOfWallFloors;
 } gameSettings;
 
 int cameraMode = 1;
@@ -247,7 +249,9 @@ int main()
     gameSettings.ballSpeed = 0.03f;
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
-
+    gameSettings.numOfWallSegments = 10;
+    gameSettings.numOfWallFloors = 4;
+    gameSettings.radius_wall = 5.0f;
 
     currentLives = gameSettings.maxLives;
 
@@ -270,12 +274,14 @@ int main()
     Mesh cubeMesh = Mesh(cubeVertices, cubeIndexes);
     Mesh sphereMesh = MeshGenerator::Sphere(1.0f);
     Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10);
+    float phi_wall = (360 / gameSettings.numOfWallSegments) / 2;
+    Mesh wallMesh = MeshGenerator::Paddle(phi_wall, 5);
 
-    Gameobject squere = Gameobject(ourShader, squereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    sphere = Gameobject(ourShader, sphereMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject paddle1 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject paddle2 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Gameobject paddle3 = Gameobject(ourShader, paddleMesh, "shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
+    Gameobject squere = Gameobject(ourShader, squereMesh);
+    sphere = Gameobject(ourShader, sphereMesh);
+    Gameobject paddle1 = Gameobject(ourShader, paddleMesh);
+    Gameobject paddle2 = Gameobject(ourShader, paddleMesh);
+    Gameobject paddle3 = Gameobject(ourShader, paddleMesh);
     
     sphere.position = Vector3(1.0f, 0.0f, 0.0f);
     paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
