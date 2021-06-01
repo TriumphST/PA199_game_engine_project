@@ -104,7 +104,7 @@ Mesh MeshGenerator::Sphere(float radius)
     return Mesh(verticesV3, indexes);
 }
 
-Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
+Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 {
     std::vector<Vector3> vertices;
     std::vector<unsigned int> indexes;
@@ -112,7 +112,7 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
     float angleBetweenVertexes = (phi * 2) / numOfLineVertexes;
 
     // top near row
-    Cylindrical3 vertexPos = Cylindrical3(10.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
+    Cylindrical3 vertexPos = Cylindrical3(distance-0.5f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
     for (int i = 0; i < numOfLineVertexes; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
@@ -121,7 +121,7 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
     vertices.push_back(vertexPos.toCartesian());
 
     // top far row
-    vertexPos = Cylindrical3(11.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
+    vertexPos = Cylindrical3(distance+0.5f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), 0.5f);
     for (int i = 0; i < numOfLineVertexes; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
@@ -130,7 +130,7 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
     vertices.push_back(vertexPos.toCartesian());
 
     // bottom near row
-    vertexPos = Cylindrical3(10.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
+    vertexPos = Cylindrical3(distance - 0.5f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
     for (int i = 0; i < numOfLineVertexes; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
@@ -139,7 +139,7 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
     vertices.push_back(vertexPos.toCartesian());
 
     // bottom far row
-    vertexPos = Cylindrical3(11.0f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
+    vertexPos = Cylindrical3(distance + 0.5f, -Helper::toRadians(angleBetweenVertexes * (numOfLineVertexes / 2)), -0.5f);
     for (int i = 0; i < numOfLineVertexes; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
@@ -206,7 +206,7 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes)
 
     for (int i = 0; i < vertices.size(); i++)
     {
-        vertices[i].x -= 10.5;
+        vertices[i].x -= distance;
     }
 
     return Mesh(vertices, indexes);

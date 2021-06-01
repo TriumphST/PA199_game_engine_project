@@ -11,7 +11,7 @@ class Gameobject
 {
 public:
     Gameobject() {};
-    Gameobject(Shader shaderProgram, Mesh mesh);
+    Gameobject(Shader shaderProgram, Mesh * mesh);
 
     float toRadians(float x);
 
@@ -29,7 +29,7 @@ public:
 private:
     int triangles = 0;
     Shader shaderProgram;
-    Mesh mesh;
+    Mesh * mesh;
 
     GLuint VAO;
     GLuint VBO;

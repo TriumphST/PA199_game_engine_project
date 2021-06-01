@@ -2,7 +2,7 @@
 #include "Matrix4.h"
 # define M_PI           3.14159265358979323846
 
-Gameobject::Gameobject(Shader shaderProgram, Mesh mesh)
+Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh)
 {
     this->mesh = mesh;
     this->triangles = triangles;
@@ -23,7 +23,7 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh mesh)
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, mesh.GetMeshVertexes().size() * sizeof(float), &mesh.GetMeshVertexes()[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, mesh->GetMeshVertexes().size() * sizeof(float), &mesh->GetMeshVertexes()[0], GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -32,7 +32,7 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh mesh)
     // indexes
     glGenBuffers(1, &elementbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.GetMeshIndexes().size() * sizeof(unsigned int), &mesh.GetMeshIndexes()[0], GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
 }
 
 float Gameobject::toRadians(float x) {
@@ -90,7 +90,7 @@ void Gameobject::render(float with, float height, int cameraMode)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glDrawElements(
         GL_TRIANGLES,      // mode
-        mesh.GetMeshIndexes().size(),    // count
+        mesh->GetMeshIndexes().size(),    // count
         GL_UNSIGNED_INT,   // type
         (void*)0           // element array buffer offset
     );

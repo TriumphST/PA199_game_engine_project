@@ -49,9 +49,17 @@ bool isBallReadyToFire = true;
 int currentLives = gameSettings.maxLives;
 bool isGameOver = false;
 
-Gameobject sphere;
+Gameobject * sphere;
 std::vector<Gameobject*> wallGOs;
 std::vector<Gameobject*> paddleGOs;
+std::vector<Gameobject*> GOs;
+
+Mesh paddleMesh;
+Mesh triangleMesh;
+Mesh squereMesh;
+Mesh cubeMesh;
+Mesh sphereMesh;
+Mesh wallMesh;
 
 
 std::vector<Vector3> squereVertices = {
@@ -107,6 +115,16 @@ std::vector<unsigned int> cubeIndexes = {
     1, 5, 6
 };
 
+void loadMeshes() {
+    paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10, gameSettings.radius_paddles);
+    triangleMesh = Mesh(triangleVertices, triangleIndexes);
+    squereMesh = Mesh(squereVertices, squereIndexes);
+    cubeMesh = Mesh(cubeVertices, cubeIndexes);
+    sphereMesh = MeshGenerator::Sphere(1.0f);
+    float phi_wall = (360.0f / float(gameSettings.numOfWallSegments)) / 2.0f;
+    wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
+}
+
 GLFWwindow* openWindow() {
     // glfw: initialize and configure
     // ------------------------------
@@ -158,8 +176,8 @@ int angularDistance(int alpha, int beta) {
 void resetBall()
 {
     Vector3 vectorCenter = paddleGOs[0]->position.normalized()*-1;
-    sphere.position = paddleGOs[0]->position + vectorCenter;
-    sphere.velocity = Vector3(0.0f);
+    sphere->position = paddleGOs[0]->position + vectorCenter;
+    sphere->velocity = Vector3(0.0f);
     isBallReadyToFire = true;
 }
 
@@ -168,8 +186,8 @@ void fireBall()
     if(isBallReadyToFire == false) {
         return;
     }
-    Vector3 vectorCenter = sphere.position.normalized() * -gameSettings.ballSpeed;
-    sphere.velocity = vectorCenter;
+    Vector3 vectorCenter = sphere->position.normalized() * -gameSettings.ballSpeed;
+    sphere->velocity = vectorCenter;
     isBallReadyToFire = false;
 }
 
@@ -233,6 +251,32 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
     }
 }
 
+void createPaddles(Shader shaderProgram) {
+    Gameobject * paddle1 = new Gameobject(shaderProgram, &paddleMesh);
+    Gameobject * paddle2 = new Gameobject(shaderProgram, &paddleMesh);
+    Gameobject * paddle3 = new Gameobject(shaderProgram, &paddleMesh);
+    paddle1->position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle2->position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle3->position = Vector3(10.0f, 0.0f, 0.0f);
+
+    Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
+    paddle1->position = rotCenter1 * paddle1->position;
+
+    Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
+    paddle2->position = rotCenter2 * paddle2->position;
+
+    Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
+    paddle3->position = rotCenter3 * paddle3->position;
+
+    paddleGOs.push_back(paddle1);
+    paddleGOs.push_back(paddle2);
+    paddleGOs.push_back(paddle3);
+
+    GOs.push_back(paddle1);
+    GOs.push_back(paddle2);
+    GOs.push_back(paddle3);
+}
+
 int main()
 {
     //Test t = Test();
@@ -249,11 +293,13 @@ int main()
     gameSettings.ballSpeed = 0.03f;
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
-    gameSettings.numOfWallSegments = 10;
-    gameSettings.numOfWallFloors = 4;
+    gameSettings.numOfWallSegments = 3;
+    gameSettings.numOfWallFloors = 1;
     gameSettings.radius_wall = 5.0f;
 
     currentLives = gameSettings.maxLives;
+
+    loadMeshes();
 
     std::cout << "Game starts!" << std::endl;
     std::cout << "Current lives: " << currentLives << std::endl;
@@ -267,44 +313,87 @@ int main()
     //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
     Shader ourShader("shaders/phong.vs", "shaders/phong.fs");
 
-    std::vector<Gameobject*> GOs;
+    //Gameobject squere = Gameobject(ourShader, squereMesh);
+    sphere = new Gameobject(ourShader, &sphereMesh);
 
-    Mesh triangleMesh = Mesh(triangleVertices, triangleIndexes);
-    Mesh squereMesh = Mesh(squereVertices, squereIndexes);
-    Mesh cubeMesh = Mesh(cubeVertices, cubeIndexes);
-    Mesh sphereMesh = MeshGenerator::Sphere(1.0f);
-    Mesh paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10);
-    float phi_wall = (360 / gameSettings.numOfWallSegments) / 2;
-    Mesh wallMesh = MeshGenerator::Paddle(phi_wall, 5);
-
-    Gameobject squere = Gameobject(ourShader, squereMesh);
-    sphere = Gameobject(ourShader, sphereMesh);
-    Gameobject paddle1 = Gameobject(ourShader, paddleMesh);
-    Gameobject paddle2 = Gameobject(ourShader, paddleMesh);
-    Gameobject paddle3 = Gameobject(ourShader, paddleMesh);
     
-    sphere.position = Vector3(1.0f, 0.0f, 0.0f);
-    paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle2.position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle3.position = Vector3(10.0f, 0.0f, 0.0f);
+    sphere->position = Vector3(1.0f, 0.0f, 0.0f);
+
+
+
+
+
+
+    GOs.push_back(sphere);
+
+    //createPaddles(ourShader);
+    //Gameobject paddle1 = Gameobject(ourShader, &paddleMesh);
+    //Gameobject paddle2 = Gameobject(ourShader, &paddleMesh);
+    //Gameobject paddle3 = Gameobject(ourShader, &paddleMesh);
+    //paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
+    //paddle2.position = Vector3(10.0f, 0.0f, 0.0f);
+    //paddle3.position = Vector3(10.0f, 0.0f, 0.0f);
+
+    //Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
+    //paddle1.position = rotCenter1 * paddle1.position;
+
+    //Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
+    //paddle2.position = rotCenter2 * paddle2.position;
+
+    //Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
+    //paddle3.position = rotCenter3 * paddle3.position;
+
+    //paddleGOs.push_back(&paddle1);
+    //paddleGOs.push_back(&paddle2);
+    //paddleGOs.push_back(&paddle3);
+
+    //GOs.push_back(&paddle1);
+    //GOs.push_back(&paddle2);
+    //GOs.push_back(&paddle3);
+
+    Gameobject* paddle1 = new Gameobject(ourShader, &paddleMesh);
+    Gameobject* paddle2 = new Gameobject(ourShader, &paddleMesh);
+    Gameobject* paddle3 = new Gameobject(ourShader, &paddleMesh);
+    paddle1->position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle2->position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle3->position = Vector3(10.0f, 0.0f, 0.0f);
 
     Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
-    paddle1.position = rotCenter1 * paddle1.position;
+    paddle1->position = rotCenter1 * paddle1->position;
 
     Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
-    paddle2.position = rotCenter2 * paddle2.position;
+    paddle2->position = rotCenter2 * paddle2->position;
 
     Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
-    paddle3.position = rotCenter3 * paddle3.position;
+    paddle3->position = rotCenter3 * paddle3->position;
 
-    paddleGOs.push_back(&paddle1);
-    paddleGOs.push_back(&paddle2);
-    paddleGOs.push_back(&paddle3);
+    paddleGOs.push_back(paddle1);
+    paddleGOs.push_back(paddle2);
+    paddleGOs.push_back(paddle3);
 
-    GOs.push_back(&sphere);
-    GOs.push_back(&paddle1);
-    GOs.push_back(&paddle2);
-    GOs.push_back(&paddle3);
+    GOs.push_back(paddle1);
+    GOs.push_back(paddle2);
+    GOs.push_back(paddle3);
+
+    //createWalls(ourShader);
+    for (int f = 0; f < gameSettings.numOfWallFloors; f++)
+    {
+        for (int s = 0; s < gameSettings.numOfWallSegments; s++)
+        {
+            // create
+            Gameobject * wall = new Gameobject(ourShader, &wallMesh);
+            // find poition on the circle
+            wall->position = Vector3(gameSettings.radius_wall, f, 0.0f);
+            float phi_wall = (360 / gameSettings.numOfWallSegments) / 2;
+            float angle = (phi_wall * 2.0f) * float(s);
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
+            wall->position = rotCenter * wall->position;
+            // rotate towards center
+            float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), wall->position.normalized());
+            wall->rotation.y = -angleY;
+            GOs.push_back(wall);
+        }
+    }
 
     resetBall();
 
@@ -320,14 +409,14 @@ int main()
         // -----
         processInput(window);
 
-        checkCollisions(&sphere, wallGOs, paddleGOs);
+        checkCollisions(sphere, wallGOs, paddleGOs);
 
-        sphere.rotation = sphere.rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
+        sphere->rotation = sphere->rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
 
         if (isBallReadyToFire == true) 
         {
             Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
-            sphere.position = rotCenter * sphere.position;
+            sphere->position = rotCenter * sphere->position;
         }
 
         for (int i = 0; i < paddleGOs.size(); i++)
@@ -365,12 +454,23 @@ int main()
     return 0;
 }
 
+void closeApplication()
+{
+    for (int i = 0; i < GOs.size(); i++)
+    {
+        delete GOs[i];
+    }
+}
+
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        //closeApplication();
         glfwSetWindowShouldClose(window, true);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
         if (isGameOver == true) {

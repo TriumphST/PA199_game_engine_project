@@ -9,7 +9,7 @@ class MeshGenerator
 {
 public:
     static Mesh Sphere(float radius);
-    static Mesh Paddle(float phi, int numOfLineVertexes);
+    static Mesh Paddle(float phi, int numOfLineVertexes, float distance);
     //static std::vector<float> SphereGLTriangles(float radius);
 };
 
