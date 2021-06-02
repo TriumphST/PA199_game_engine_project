@@ -415,11 +415,7 @@ int main()
 
     
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
-
-
-
-
-
+    sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
     GOs.push_back(sphere);
 
@@ -454,6 +450,9 @@ int main()
     paddle1->position = Vector3(10.0f, 0.0f, 0.0f);
     paddle2->position = Vector3(10.0f, 0.0f, 0.0f);
     paddle3->position = Vector3(10.0f, 0.0f, 0.0f);
+    paddle1->color = Vector3(66.0f/255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
+    paddle2->color = Vector3(66.0f /255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
+    paddle3->color = Vector3(66.0f /255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
 
     Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
     paddle1->position = rotCenter1 * paddle1->position;
@@ -484,6 +483,12 @@ int main()
             float angle = (phi_wall * 2.0f) * float(s);
             Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
             wall->position = rotCenter * wall->position;
+            if((f+s)%2 == 1){
+                wall->color = Vector3(65.0f / 255.0f, 171.0f / 255.0f, 51.0f / 255.0f);
+            }
+            else {
+                wall->color = Vector3(207.0f / 255.0f, 149.0f / 255.0f, 14.0f / 255.0f);
+            }
             float rad = Helper::toRadians(angle);
             Cylindrical3 test = wall->position.toCylindrical();
             // rotate towards center

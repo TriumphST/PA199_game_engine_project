@@ -20,6 +20,7 @@ public:
     Vector3 rotationAroundCenter;
     Vector3 scale;
     Vector3 velocity;
+    Vector3 color;
     std::vector<float> vertices;
     
     void update(float deltaTime);
