@@ -48,6 +48,7 @@ float paddleRotation = 0.0f;
 bool isBallReadyToFire = true;
 int currentLives = gameSettings.maxLives;
 bool isGameOver = false;
+float phi_wall = 0.0f;
 
 Gameobject * sphere;
 std::vector<Gameobject*> wallGOs;
@@ -121,7 +122,6 @@ void loadMeshes() {
     squereMesh = Mesh(squereVertices, squereIndexes);
     cubeMesh = Mesh(cubeVertices, cubeIndexes);
     sphereMesh = MeshGenerator::Sphere(1.0f);
-    float phi_wall = (360.0f / float(gameSettings.numOfWallSegments)) / 2.0f;
     wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
 }
 
@@ -197,6 +197,23 @@ void restartGame() {
     currentLives = gameSettings.maxLives;
 }
 
+void wallHit(Gameobject* wall) {
+    int a = -1;
+    int b = -1;
+    for (int i = 0; i < wallGOs.size(); i++)
+    {
+        if (wall == wallGOs[i])
+            a = i;
+    }
+    wallGOs.erase(wallGOs.begin()+a);
+    for (int i = 0; i < GOs.size(); i++)
+    {
+        if (wall == GOs[i])
+            b = i;
+    }
+    GOs.erase(GOs.begin() + b);
+}
+
 void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
 {
     // check broad collisions
@@ -214,11 +231,42 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
         }
         resetBall();
     }
-
     // from center to wall radius + helf of wall diameter + half of shere radius
-    if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 5))
+    else if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 5))
     {
+        if (wallGOs.size() <= 0)
+            return;
         // check wall collision
+        // check paddle collision
+        int closestIndex = 0;
+        float closestAngle = 1000.0f;
+        for (int i = 0; i < wallGOs.size(); i++)
+        {
+            Gameobject* wall = wallGOs[i];
+            if (wall->position.y != 0.0f) { // skip those, that are not in corect level
+                continue;
+            }
+            Cylindrical3 wallPos = wall->position.toCylindrical();
+            float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(wallPos.angle));
+            if (angleDiff < closestAngle) {
+                closestAngle = angleDiff;
+                closestIndex = i;
+            }
+        }
+
+        // check closest wall collision
+        Gameobject* wall = wallGOs[closestIndex];
+        Cylindrical3 wallPos = wall->position.toCylindrical();
+        if (closestAngle <= phi_wall) {
+            // ball is colliding with the wall
+            float dir = 1.0f;
+            if (speherePos.distance < gameSettings.radius_wall) {
+                dir = -1.0f;
+            }
+            Vector3 n = sphere->position.normalized() * dir;
+            sphere->velocity = n * gameSettings.ballSpeed;
+            wallHit(wall);
+        }
     }
     else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2) - (sphere->scale.x / 5))
     {
@@ -298,6 +346,7 @@ int main()
     gameSettings.radius_wall = 5.0f;
 
     currentLives = gameSettings.maxLives;
+    phi_wall = (360.0f / float(gameSettings.numOfWallSegments)) / 2.0f;
 
     loadMeshes();
 
@@ -384,7 +433,6 @@ int main()
             Gameobject * wall = new Gameobject(ourShader, &wallMesh);
             // find poition on the circle
             wall->position = Vector3(gameSettings.radius_wall, f, 0.0f);
-            float phi_wall = (360 / gameSettings.numOfWallSegments) / 2;
             float angle = (phi_wall * 2.0f) * float(s);
             Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
             wall->position = rotCenter * wall->position;
@@ -392,6 +440,7 @@ int main()
             float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), wall->position.normalized());
             wall->rotation.y = -angleY;
             GOs.push_back(wall);
+            wallGOs.push_back(wall);
         }
     }
 

@@ -2,7 +2,7 @@
 #include "Cylindrical3.h"
 #include <math.h>
 
-
+# define M_PI           3.14159265358979323846
 
 Vector3::Vector3()
 {
@@ -68,7 +68,31 @@ Cylindrical3 Vector3::toCylindrical()
 {
 	// y and z are inverted
 	float r = sqrt((x * x) + (z * z));
-	float angle = atan(z / x);
+	float angle = -1.0f;
+	if (x == 0.0f) {
+		if (z == 0.0f){
+			angle = 0.0f;
+		}
+		else if(z > 0.0f)
+		{
+			angle = M_PI / 2.0f;
+		}
+		else {
+			angle = (3.0f*M_PI) / 2.0f;
+		}
+	}
+	else if(z == 0.0f){
+		if (x > 0.0f)
+		{
+			angle = 0;
+		}
+		else {
+			angle = M_PI;
+		}
+	}
+	else{
+		angle = atan(z / x);
+	}
 	Cylindrical3 res = Cylindrical3(r, angle, y);
 	return res;
 	return Cylindrical3();
