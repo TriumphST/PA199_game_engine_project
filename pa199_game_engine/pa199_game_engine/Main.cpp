@@ -175,7 +175,7 @@ int angularDistance(int alpha, int beta) {
 
 void resetBall()
 {
-    Vector3 vectorCenter = paddleGOs[0]->position.normalized()*-1;
+    Vector3 vectorCenter = paddleGOs[0]->position.normalized()*-1.5;
     sphere->position = paddleGOs[0]->position + vectorCenter;
     sphere->velocity = Vector3(0.0f);
     isBallReadyToFire = true;
@@ -186,8 +186,22 @@ void fireBall()
     if(isBallReadyToFire == false) {
         return;
     }
-    Vector3 vectorCenter = sphere->position.normalized() * -gameSettings.ballSpeed;
-    sphere->velocity = vectorCenter;
+    srand((unsigned int)time(NULL));
+    float a = 3.0f;
+    float b = 2.0f;
+    int posX = (rand() % 2);
+    if (posX == 0)
+        posX = -1;
+
+    int posZ = (rand() % 2);
+    if (posZ == 0)
+        posZ = -1;
+
+    float randomX = ((float(rand()) / float((RAND_MAX)) * a) + b) * posX;
+    float randomZ = ((float(rand()) / float((RAND_MAX)) * a) + b) * posZ;
+    Vector3 randomTargetPosition = Vector3(randomX,0.0f, randomZ);
+    Vector3 vectorTarget = (sphere->position - randomTargetPosition).normalized() * -gameSettings.ballSpeed;
+    sphere->velocity = vectorTarget;
     isBallReadyToFire = false;
 }
 
@@ -232,7 +246,8 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
         resetBall();
     }
     // from center to wall radius + helf of wall diameter + half of shere radius
-    else if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 5))
+    else if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 2)
+        && speherePos.distance > gameSettings.radius_wall - (gameSettings.diameter_wall / 2) - (sphere->scale.x / 2))
     {
         if (wallGOs.size() <= 0)
             return;
@@ -264,11 +279,14 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
                 dir = -1.0f;
             }
             Vector3 n = sphere->position.normalized() * dir;
-            sphere->velocity = n * gameSettings.ballSpeed;
+            if (n.dot(sphere->velocity) >= 0.0f)
+                return;
+            Vector3 Vn = n * (n.dot(sphere->velocity));
+            sphere->velocity = sphere->velocity - (Vn * 2);
             wallHit(wall);
         }
     }
-    else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2) - (sphere->scale.x / 5))
+    else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2) - (sphere->scale.x / 2))
     {
         // check paddle collision
         int closestIndex = 0;
@@ -293,8 +311,12 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
             if (speherePos.distance < gameSettings.radius_paddles) {
                 dir = -1.0f;
             }
+            
             Vector3 n = sphere->position.normalized() * dir;
-            sphere->velocity = n*gameSettings.ballSpeed;
+            if (n.dot(sphere->velocity) >= 0.0f)
+                return;
+            Vector3 Vn = n * (n.dot(sphere->velocity));
+            sphere->velocity = sphere->velocity - Vn*2;
         }
     }
 }
@@ -338,10 +360,10 @@ int main()
     gameSettings.diameter_paddles = 1.0f;
     gameSettings.phi_paddles = 20.0f;
     gameSettings.radius_border = 12.0f;
-    gameSettings.ballSpeed = 0.03f;
+    gameSettings.ballSpeed = 0.1f;
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
-    gameSettings.numOfWallSegments = 3;
+    gameSettings.numOfWallSegments = 10;
     gameSettings.numOfWallFloors = 1;
     gameSettings.radius_wall = 5.0f;
 
@@ -462,7 +484,7 @@ int main()
 
         checkCollisions(sphere, wallGOs, paddleGOs);
 
-        sphere->rotation = sphere->rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
+        //sphere->rotation = sphere->rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
 
         if (isBallReadyToFire == true) 
         {
