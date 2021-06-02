@@ -436,6 +436,8 @@ int main()
             float angle = (phi_wall * 2.0f) * float(s);
             Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
             wall->position = rotCenter * wall->position;
+            float rad = Helper::toRadians(angle);
+            Cylindrical3 test = wall->position.toCylindrical();
             // rotate towards center
             float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), wall->position.normalized());
             wall->rotation.y = -angleY;

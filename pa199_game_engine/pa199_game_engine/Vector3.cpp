@@ -73,7 +73,7 @@ Cylindrical3 Vector3::toCylindrical()
 		if (z == 0.0f){
 			angle = 0.0f;
 		}
-		else if(z > 0.0f)
+		else if(z < 0.0f)
 		{
 			angle = M_PI / 2.0f;
 		}
@@ -91,7 +91,11 @@ Cylindrical3 Vector3::toCylindrical()
 		}
 	}
 	else{
-		angle = atan(z / x);
+		//if(x > 0)
+		//	angle = atan(z / x);
+		//else
+		//	angle = -atan(z / r)+M_PI;
+		angle = atan2(-z, x);
 	}
 	Cylindrical3 res = Cylindrical3(r, angle, y);
 	return res;
