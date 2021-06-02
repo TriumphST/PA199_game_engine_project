@@ -49,6 +49,7 @@ bool isBallReadyToFire = true;
 int currentLives = gameSettings.maxLives;
 bool isGameOver = false;
 float phi_wall = 0.0f;
+int wallHitCount = 0;
 
 Gameobject * sphere;
 std::vector<Gameobject*> wallGOs;
@@ -211,6 +212,21 @@ void restartGame() {
     currentLives = gameSettings.maxLives;
 }
 
+void moveWallsOneLevel() {
+    for (int i = 0; i < wallGOs.size(); i++)
+    {
+        Vector3 newPos = wallGOs[i]->position;
+        newPos.y -= 1.0f;
+        wallGOs[i]->position = newPos;
+    }
+}
+
+void gameWon() {
+    std::cout << "Game Won!" << std::endl;
+    std::cout << "Press ENTER to restart the game" << std::endl;
+    isGameOver = true;
+}
+
 void wallHit(Gameobject* wall) {
     int a = -1;
     int b = -1;
@@ -226,6 +242,16 @@ void wallHit(Gameobject* wall) {
             b = i;
     }
     GOs.erase(GOs.begin() + b);
+
+    wallHitCount++;
+    if (wallHitCount == gameSettings.numOfWallSegments) {
+        wallHitCount = 0;
+        moveWallsOneLevel();
+    }
+
+    if (wallGOs.size() <= 0) {
+        gameWon();
+    }
 }
 
 void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
@@ -364,7 +390,7 @@ int main()
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
-    gameSettings.numOfWallFloors = 1;
+    gameSettings.numOfWallFloors = 4;
     gameSettings.radius_wall = 5.0f;
 
     currentLives = gameSettings.maxLives;
@@ -549,6 +575,10 @@ void processInput(GLFWwindow* window)
         if (isGameOver == true) {
             restartGame();
         }
+    }
+
+    if (isGameOver == true) {
+        return;
     }
         
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
