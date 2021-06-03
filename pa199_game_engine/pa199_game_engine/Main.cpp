@@ -419,57 +419,8 @@ int main()
 
     GOs.push_back(sphere);
 
-    //createPaddles(ourShader);
-    //Gameobject paddle1 = Gameobject(ourShader, &paddleMesh);
-    //Gameobject paddle2 = Gameobject(ourShader, &paddleMesh);
-    //Gameobject paddle3 = Gameobject(ourShader, &paddleMesh);
-    //paddle1.position = Vector3(10.0f, 0.0f, 0.0f);
-    //paddle2.position = Vector3(10.0f, 0.0f, 0.0f);
-    //paddle3.position = Vector3(10.0f, 0.0f, 0.0f);
+    createPaddles(ourShader);
 
-    //Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
-    //paddle1.position = rotCenter1 * paddle1.position;
-
-    //Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
-    //paddle2.position = rotCenter2 * paddle2.position;
-
-    //Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
-    //paddle3.position = rotCenter3 * paddle3.position;
-
-    //paddleGOs.push_back(&paddle1);
-    //paddleGOs.push_back(&paddle2);
-    //paddleGOs.push_back(&paddle3);
-
-    //GOs.push_back(&paddle1);
-    //GOs.push_back(&paddle2);
-    //GOs.push_back(&paddle3);
-
-    Gameobject* paddle1 = new Gameobject(ourShader, &paddleMesh);
-    Gameobject* paddle2 = new Gameobject(ourShader, &paddleMesh);
-    Gameobject* paddle3 = new Gameobject(ourShader, &paddleMesh);
-    paddle1->position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle2->position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle3->position = Vector3(10.0f, 0.0f, 0.0f);
-    paddle1->color = Vector3(66.0f/255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
-    paddle2->color = Vector3(66.0f /255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
-    paddle3->color = Vector3(66.0f /255.0f, 135.0f / 255.0f, 245.0f / 255.0f);
-
-    Matrix4 rotCenter1 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(0.0f), 0.0f);
-    paddle1->position = rotCenter1 * paddle1->position;
-
-    Matrix4 rotCenter2 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(120.0f), 0.0f);
-    paddle2->position = rotCenter2 * paddle2->position;
-
-    Matrix4 rotCenter3 = Matrix4::rotationMatrix(0.0f, Helper::toRadians(240.0f), 0.0f);
-    paddle3->position = rotCenter3 * paddle3->position;
-
-    paddleGOs.push_back(paddle1);
-    paddleGOs.push_back(paddle2);
-    paddleGOs.push_back(paddle3);
-
-    GOs.push_back(paddle1);
-    GOs.push_back(paddle2);
-    GOs.push_back(paddle3);
 
     //createWalls(ourShader);
     for (int f = 0; f < gameSettings.numOfWallFloors; f++)
@@ -564,6 +515,7 @@ void closeApplication()
     {
         delete GOs[i];
     }
+    GOs.clear();
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -572,8 +524,8 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        //closeApplication();
         glfwSetWindowShouldClose(window, true);
+        closeApplication();
     }
 
     if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
