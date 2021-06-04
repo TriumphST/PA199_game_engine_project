@@ -30,6 +30,13 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    // normals
+    if (mesh->GetMeshNormals().size() > 0) {
+        glGenBuffers(1, &normalbuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glBufferData(GL_ARRAY_BUFFER, mesh->GetMeshNormals().size() * sizeof(float), &mesh->GetMeshNormals()[0], GL_STATIC_DRAW);
+    }
+
     // indexes
     glGenBuffers(1, &elementbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
@@ -83,6 +90,19 @@ void Gameobject::render(float with, float height, int cameraMode)
     Matrix4 model = Matrix4(1.0f);
     model = model * transM * scaleM * rotM;
     shaderProgram.setMat4("model", model.core);
+
+    if (mesh->GetMeshNormals().size() > 0) {
+        glEnableVertexAttribArray(2);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glVertexAttribPointer(
+            2,                                // attribute
+            3,                                // size
+            GL_FLOAT,                         // type
+            GL_FALSE,                         // normalized?
+            0,                                // stride
+            (void*)0                          // array buffer offset
+        );
+    }
 
     int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "color");
     glUniform3f(vertexColorLocation, color.x, color.y, color.z);

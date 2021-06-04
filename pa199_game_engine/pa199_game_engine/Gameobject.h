@@ -35,5 +35,6 @@ private:
     GLuint VAO;
     GLuint VBO;
     GLuint elementbuffer;
+    GLuint normalbuffer;
 };
 

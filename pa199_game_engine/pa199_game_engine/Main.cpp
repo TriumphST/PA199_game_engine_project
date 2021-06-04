@@ -64,64 +64,13 @@ Mesh sphereMesh;
 Mesh wallMesh;
 
 
-std::vector<Vector3> squereVertices = {
-        Vector3(-0.5f, -0.5f, 0.0f),   //0
-        Vector3(0.5f, -0.5f, 0.0f),    //1
-        Vector3(0.5f,  0.5f, 0.0f),   //2
-        Vector3(-0.5f,  0.5f, 0.0f),    //3
-};
 
-std::vector<unsigned int> squereIndexes = {
-        0,1,2,
-        0,2,3
-};
-
-std::vector<Vector3> triangleVertices = {
-    Vector3(-0.5f, -0.5f, 0.0f),
-    Vector3(0.5f, -0.5f, 0.0f),
-    Vector3(0.0f,  0.5f, 0.0f)
-};
-
-std::vector<unsigned int> triangleIndexes = {
-    0, 1, 2
-};
-
-std::vector<Vector3> cubeVertices = {
-        Vector3(-0.5f, -0.5f, 0.5f),
-        Vector3(0.5f, -0.5f, 0.5f),
-        Vector3(0.5f,  0.5f, 0.5f),
-        Vector3(-0.5f,  0.5f, 0.5f),
-        Vector3(-0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f, -0.5f),
-        Vector3(0.5f,  0.5f, -0.5f),
-        Vector3(-0.5f,  0.5f, -0.5f),
-};
-
-std::vector<unsigned int> cubeIndexes = {
-    0, 1, 2,
-    0, 2, 3,
-
-    0, 1, 5,
-    0, 5, 4,
-
-    0, 4, 7,
-    0, 7, 3,
-
-    3, 6, 7,
-    3, 6, 2,
-
-    4, 5, 6,
-    4, 6, 7,
-
-    1, 6, 2,
-    1, 5, 6
-};
 
 void loadMeshes() {
     paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10, gameSettings.radius_paddles);
-    triangleMesh = Mesh(triangleVertices, triangleIndexes);
-    squereMesh = Mesh(squereVertices, squereIndexes);
-    cubeMesh = Mesh(cubeVertices, cubeIndexes);
+    triangleMesh = MeshGenerator::Triangle();
+    squereMesh = MeshGenerator::Squere();
+    cubeMesh = MeshGenerator::Cube();
     sphereMesh = MeshGenerator::Sphere(1.0f);
     wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
 }

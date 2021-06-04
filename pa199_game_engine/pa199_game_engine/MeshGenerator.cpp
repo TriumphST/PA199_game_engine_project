@@ -1,5 +1,115 @@
 #include "MeshGenerator.h"
 
+Mesh MeshGenerator::Triangle()
+{
+    std::vector<Vector3> triangleVertices = {
+    Vector3(-0.5f, -0.5f, 0.0f),
+    Vector3(0.5f, -0.5f, 0.0f),
+    Vector3(0.0f,  0.5f, 0.0f)
+    };
+
+    std::vector<unsigned int> triangleIndexes = {
+        0, 1, 2
+    };
+    return Mesh(triangleVertices, triangleIndexes);
+}
+
+Mesh MeshGenerator::Squere()
+{
+    std::vector<Vector3> squereVertices = {
+        Vector3(-0.5f, -0.5f, 0.0f),   //0
+        Vector3(0.5f, -0.5f, 0.0f),    //1
+        Vector3(0.5f,  0.5f, 0.0f),   //2
+        Vector3(-0.5f,  0.5f, 0.0f),    //3
+    };
+
+    std::vector<unsigned int> squereIndexes = {
+            0,1,2,
+            0,2,3
+    };
+    return Mesh(squereVertices, squereIndexes);
+}
+
+Mesh MeshGenerator::Cube()
+{
+    std::vector<Vector3> cubeVertices = {
+        Vector3(-0.5f, -0.5f, 0.5f),
+        Vector3(0.5f, -0.5f, 0.5f),
+        Vector3(0.5f,  0.5f, 0.5f),
+        Vector3(-0.5f,  0.5f, 0.5f),
+        Vector3(-0.5f, -0.5f, -0.5f),
+        Vector3(0.5f, -0.5f, -0.5f),
+        Vector3(0.5f,  0.5f, -0.5f),
+        Vector3(-0.5f,  0.5f, -0.5f),
+    };
+
+    std::vector<unsigned int> cubeIndexes = {
+        0, 1, 2,
+        0, 2, 3,
+
+        0, 1, 5,
+        0, 5, 4,
+
+        0, 4, 7,
+        0, 7, 3,
+
+        3, 6, 7,
+        3, 6, 2,
+
+        4, 5, 6,
+        4, 6, 7,
+
+        1, 6, 2,
+        1, 5, 6
+    };
+
+    std::vector<Vector3> cubeNormals = {
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+        0.0f,  0.0f, -1.0f,
+
+        0.0f,  0.0f, 1.0f,
+        0.0f,  0.0f, 1.0f,
+        0.0f,  0.0f, 1.0f,
+        0.0f,  0.0f, 1.0f,
+        0.0f,  0.0f, 1.0f,
+        0.0f,  0.0f, 1.0f,
+
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+        1.0f,  0.0f,  0.0f,
+
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+        0.0f, -1.0f,  0.0f,
+
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f,
+        0.0f,  1.0f,  0.0f
+    };
+
+    return Mesh(cubeVertices, cubeIndexes);
+}
+
 // http://www.songho.ca/opengl/gl_sphere.html
 Mesh MeshGenerator::Sphere(float radius)
 {
@@ -211,18 +321,3 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
     return Mesh(vertices, indexes);
 }
-
-//std::vector<float> MeshGenerator::SphereGLTriangles(float radius)
-//{
-//    std::vector<Vector3> verticesV3 = Sphere(radius);
-//    std::vector<Vector3> vertexesTriangles;
-//
-//    vertexesTriangles.push_back(verticesV3[0]);
-//    vertexesTriangles.push_back(verticesV3[1]);
-//    vertexesTriangles.push_back(verticesV3[2]);
-//
-//    vertexesTriangles.push_back(verticesV3[0]);
-//    vertexesTriangles.push_back(verticesV3[1]);
-//    vertexesTriangles.push_back(verticesV3[2]);
-//
-//}

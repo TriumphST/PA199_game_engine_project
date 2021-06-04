@@ -17,6 +17,11 @@ std::vector<float> Mesh::GetMeshVertexes()
 	return verticesArr;
 }
 
+std::vector<float> Mesh::GetMeshNormals()
+{
+	return normalsArr;
+}
+
 std::vector<unsigned int> Mesh::GetMeshIndexes()
 {
 	return indexesArr;
