@@ -8,6 +8,7 @@ class Mesh
 public:
     Mesh() {};
     Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes);
+    Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes, std::vector<Vector3> normals);
     std::vector<float> GetMeshVertexes();
     std::vector<float> GetMeshNormals();
     std::vector<unsigned int> GetMeshIndexes();

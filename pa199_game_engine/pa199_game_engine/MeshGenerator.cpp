@@ -64,50 +64,50 @@ Mesh MeshGenerator::Cube()
     };
 
     std::vector<Vector3> cubeNormals = {
-        0.0f,  0.0f, -1.0f,
-        0.0f,  0.0f, -1.0f,
-        0.0f,  0.0f, -1.0f,
-        0.0f,  0.0f, -1.0f,
-        0.0f,  0.0f, -1.0f,
-        0.0f,  0.0f, -1.0f,
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
 
-        0.0f,  0.0f, 1.0f,
-        0.0f,  0.0f, 1.0f,
-        0.0f,  0.0f, 1.0f,
-        0.0f,  0.0f, 1.0f,
-        0.0f,  0.0f, 1.0f,
-        0.0f,  0.0f, 1.0f,
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
 
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
 
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-        1.0f,  0.0f,  0.0f,
-
-        0.0f, -1.0f,  0.0f,
-        0.0f, -1.0f,  0.0f,
-        0.0f, -1.0f,  0.0f,
-        0.0f, -1.0f,  0.0f,
-        0.0f, -1.0f,  0.0f,
-        0.0f, -1.0f,  0.0f,
-
-        0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f,
-        0.0f,  1.0f,  0.0f
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(1.0f,  0.0f,  0.0f),
+                                  
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+                                  
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f)
     };
 
-    return Mesh(cubeVertices, cubeIndexes);
+    return Mesh(cubeVertices, cubeIndexes, cubeNormals);
 }
 
 // http://www.songho.ca/opengl/gl_sphere.html

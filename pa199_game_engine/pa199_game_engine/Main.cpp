@@ -391,7 +391,8 @@ int main()
     Shader phongShader("shaders/phong.vs", "shaders/phong.fs");
 
     Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
-    cube->color = Vector3(0.5f, 0.8f, 0.5f);
+    cube->color = Vector3(0.5f, 0.5f, 0.8f);
+    cube->scale = Vector3(5.0f, 5.0f, 5.0f);
 
     sphere = new Gameobject(ourShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
@@ -401,9 +402,7 @@ int main()
     GOs.push_back(sphere);
 
     createPaddles(ourShader);
-
-
-    createWalls(ourShader);
+    //createWalls(ourShader);
 
     resetBall();
 
@@ -499,6 +498,8 @@ void processInput(GLFWwindow* window)
         cameraMode = 1;
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
         cameraMode = 2;
+    if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+        cameraMode = 3;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if (paddleRotation == 0.0f)
             paddleRotation = -1.0f;

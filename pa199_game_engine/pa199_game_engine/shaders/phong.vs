@@ -6,7 +6,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 FragPos; 
+out vec3 Normal;
+
 void main()
 {
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
+    //lighting calculations are in world space, we need vertex position in world space, multiplying the vertex position by model matrix only
+    FragPos = vec3(model * vec4(aPos, 1.0));
+    Normal = aNormal;
 }
