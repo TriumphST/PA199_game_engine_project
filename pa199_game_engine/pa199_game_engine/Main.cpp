@@ -322,6 +322,36 @@ void createPaddles(Shader shaderProgram) {
     GOs.push_back(paddle3);
 }
 
+void createWalls(Shader shaderProgram)
+{
+    for (int f = 0; f < gameSettings.numOfWallFloors; f++)
+    {
+        for (int s = 0; s < gameSettings.numOfWallSegments; s++)
+        {
+            // create
+            Gameobject* wall = new Gameobject(shaderProgram, &wallMesh);
+            // find poition on the circle
+            wall->position = Vector3(gameSettings.radius_wall, f, 0.0f);
+            float angle = (phi_wall * 2.0f) * float(s);
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
+            wall->position = rotCenter * wall->position;
+            if ((f + s) % 2 == 1) {
+                wall->color = Vector3(65.0f / 255.0f, 171.0f / 255.0f, 51.0f / 255.0f);
+            }
+            else {
+                wall->color = Vector3(207.0f / 255.0f, 149.0f / 255.0f, 14.0f / 255.0f);
+            }
+            float rad = Helper::toRadians(angle);
+            Cylindrical3 test = wall->position.toCylindrical();
+            // rotate towards center
+            float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), wall->position.normalized());
+            wall->rotation.y = -angleY;
+            GOs.push_back(wall);
+            wallGOs.push_back(wall);
+        }
+    }
+}
+
 int main()
 {
     //Test t = Test();
@@ -357,47 +387,23 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Shader ourShader("shaders/phong.vs", "shaders/phong.fs");
+    Shader ourShader("shaders/ambient.vs", "shaders/ambient.fs");
+    Shader phongShader("shaders/phong.vs", "shaders/phong.fs");
 
-    //Gameobject squere = Gameobject(ourShader, squereMesh);
+    Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
+    cube->color = Vector3(0.5f, 0.8f, 0.5f);
+
     sphere = new Gameobject(ourShader, &sphereMesh);
-
-    
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
+    GOs.push_back(cube);
     GOs.push_back(sphere);
 
     createPaddles(ourShader);
 
 
-    //createWalls(ourShader);
-    for (int f = 0; f < gameSettings.numOfWallFloors; f++)
-    {
-        for (int s = 0; s < gameSettings.numOfWallSegments; s++)
-        {
-            // create
-            Gameobject * wall = new Gameobject(ourShader, &wallMesh);
-            // find poition on the circle
-            wall->position = Vector3(gameSettings.radius_wall, f, 0.0f);
-            float angle = (phi_wall * 2.0f) * float(s);
-            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, Helper::toRadians(angle), 0.0f);
-            wall->position = rotCenter * wall->position;
-            if((f+s)%2 == 1){
-                wall->color = Vector3(65.0f / 255.0f, 171.0f / 255.0f, 51.0f / 255.0f);
-            }
-            else {
-                wall->color = Vector3(207.0f / 255.0f, 149.0f / 255.0f, 14.0f / 255.0f);
-            }
-            float rad = Helper::toRadians(angle);
-            Cylindrical3 test = wall->position.toCylindrical();
-            // rotate towards center
-            float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), wall->position.normalized());
-            wall->rotation.y = -angleY;
-            GOs.push_back(wall);
-            wallGOs.push_back(wall);
-        }
-    }
+    createWalls(ourShader);
 
     resetBall();
 

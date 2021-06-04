@@ -133,5 +133,11 @@
     <None Include="shaders\phong.fs">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\ambient.fs">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ambient.vs">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

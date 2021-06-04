@@ -182,6 +182,8 @@
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\ambient.fs" />
+    <None Include="shaders\ambient.vs" />
     <None Include="shaders\coordinate_system.fs" />
     <None Include="shaders\coordinate_system.vs" />
     <None Include="shaders\phong.fs" />
