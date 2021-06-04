@@ -393,11 +393,18 @@ int main()
     Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
     cube->color = Vector3(0.5f, 0.5f, 0.8f);
     cube->scale = Vector3(5.0f, 5.0f, 5.0f);
+    //cube->position = Vector3(0.0f, 0.0f, 10.0f);
+
+    //Gameobject* squere = new Gameobject(phongShader, &squereMesh);
+    //squere->color = Vector3(0.5f, 0.5f, 0.8f);
+    //squere->scale = Vector3(5.0f, 5.0f, 5.0f);
+    //squere->rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
 
     sphere = new Gameobject(ourShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
+    //GOs.push_back(squere);
     GOs.push_back(cube);
     GOs.push_back(sphere);
 

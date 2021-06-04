@@ -27,7 +27,16 @@ Mesh MeshGenerator::Squere()
             0,1,2,
             0,2,3
     };
-    return Mesh(squereVertices, squereIndexes);
+
+    std::vector<Vector3> squereNormals = {
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, 1.0f),
+    };
+    return Mesh(squereVertices, squereIndexes, squereNormals);
 }
 
 Mesh MeshGenerator::Cube()
@@ -53,24 +62,17 @@ Mesh MeshGenerator::Cube()
         0, 4, 7,
         0, 7, 3,
 
-        3, 6, 7,
         3, 6, 2,
+        3, 6, 7,
 
         4, 5, 6,
         4, 6, 7,
 
-        1, 6, 2,
-        1, 5, 6
+        1, 5, 6,
+        6, 2, 1
     };
 
     std::vector<Vector3> cubeNormals = {
-        Vector3(0.0f,  0.0f, -1.0f),
-        Vector3(0.0f,  0.0f, -1.0f),
-        Vector3(0.0f,  0.0f, -1.0f),
-        Vector3(0.0f,  0.0f, -1.0f),
-        Vector3(0.0f,  0.0f, -1.0f),
-        Vector3(0.0f,  0.0f, -1.0f),
-
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
@@ -78,33 +80,40 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
 
-        Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
 
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f),
-                                  
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-                                  
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f)
+        Vector3(1.0f,  0.0f,  0.0f)
     };
 
     return Mesh(cubeVertices, cubeIndexes, cubeNormals);
