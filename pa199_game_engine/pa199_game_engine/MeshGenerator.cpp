@@ -20,56 +20,119 @@ Mesh MeshGenerator::Squere()
         Vector3(-0.5f, -0.5f, 0.0f),   //0
         Vector3(0.5f, -0.5f, 0.0f),    //1
         Vector3(0.5f,  0.5f, 0.0f),   //2
-        Vector3(-0.5f,  0.5f, 0.0f),    //3
+        Vector3(-0.5f, -0.5f, 0.0f),   //0 >3
+        Vector3(0.5f,  0.5f, 0.0f),   //2 >4
+        Vector3(-0.5f,  0.5f, 0.0f),    //3 >5
     };
 
     std::vector<unsigned int> squereIndexes = {
             0,1,2,
-            0,2,3
+            3,4,5
     };
 
     std::vector<Vector3> squereNormals = {
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
-        Vector3(0.0f,  0.0f, 1.0f),
-        Vector3(0.0f,  0.0f, 1.0f),
-        Vector3(0.0f,  0.0f, 1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
+        Vector3(0.0f,  0.0f, -1.0f),
     };
     return Mesh(squereVertices, squereIndexes, squereNormals);
 }
 
 Mesh MeshGenerator::Cube()
 {
+    Vector3 front_left_down = Vector3(-0.5f, -0.5f, 0.5f); //0
+    Vector3 front_right_down = Vector3(0.5f, -0.5f, 0.5f); //1
+    Vector3 front_right_up = Vector3(0.5f, 0.5f, 0.5f);    //2
+    Vector3 front_left_up = Vector3(-0.5f, 0.5f, 0.5f);    //3
+    Vector3 back_left_down = Vector3(-0.5f, -0.5f, -0.5f); //4
+    Vector3 back_right_down = Vector3(0.5f, -0.5f, -0.5f); //5
+    Vector3 back_right_up = Vector3(0.5f, 0.5f, -0.5f);    //6
+    Vector3 back_left_up = Vector3(-0.5f, 0.5f, -0.5f);    //7
+
     std::vector<Vector3> cubeVertices = {
-        Vector3(-0.5f, -0.5f, 0.5f),
-        Vector3(0.5f, -0.5f, 0.5f),
-        Vector3(0.5f,  0.5f, 0.5f),
-        Vector3(-0.5f,  0.5f, 0.5f),
-        Vector3(-0.5f, -0.5f, -0.5f),
-        Vector3(0.5f, -0.5f, -0.5f),
-        Vector3(0.5f,  0.5f, -0.5f),
-        Vector3(-0.5f,  0.5f, -0.5f),
+        // front face trinagle 1
+        front_left_down,
+        front_right_down,
+        front_right_up,
+
+        // front face trinagle 2
+        front_left_down,
+        front_right_up,
+        front_left_up,
+
+        // back face trinagle 1
+        back_left_down,
+        back_right_down,
+        back_right_up,
+
+        // back face trinagle 2
+        back_left_down,
+        back_right_up,
+        back_left_up,
+
+        // left face trinagle 1
+        back_left_down,
+        front_left_down,
+        front_left_up,
+
+        // left face trinagle 2
+        back_left_down,
+        front_left_up,
+        front_right_up,
+
+        // right face trinagle 1
+        front_right_down,
+        back_right_down,
+        back_right_up,
+
+        // right face trinagle 2
+        front_right_down,
+        back_right_up,
+        front_right_up,
+
+        // up face trinagle 1
+        front_left_up,
+        front_right_up,
+        back_right_up,
+
+        // up face trinagle 2
+        front_left_up,
+        back_right_up,
+        back_left_up,
+
+        // down face trinagle 1
+        front_left_down,
+        front_right_down,
+        back_right_down,
+
+        // down face trinagle 2
+        front_left_down,
+        back_right_down,
+        back_left_down,
+
     };
 
     std::vector<unsigned int> cubeIndexes = {
         0, 1, 2,
-        0, 2, 3,
+        3, 4, 5,
 
-        0, 1, 5,
-        0, 5, 4,
+        6, 7, 8,
+        9, 10, 11,
 
-        0, 4, 7,
-        0, 7, 3,
+        12, 13, 14,
+        15, 16, 17,
 
-        3, 6, 2,
-        3, 6, 7,
+        18, 19, 20,
+        21, 22, 23,
 
-        4, 5, 6,
-        4, 6, 7,
+        24, 25, 26,
+        27, 28, 29,
 
-        1, 5, 6,
-        6, 2, 1
+        30, 31, 32,
+        33, 34, 35
     };
 
     std::vector<Vector3> cubeNormals = {
@@ -80,27 +143,6 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
 
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
-
-        Vector3(-1.0f,  0.0f,  0.0f),
-        Vector3(-1.0f,  0.0f,  0.0f),
-        Vector3(-1.0f,  0.0f,  0.0f),
-        Vector3(-1.0f,  0.0f,  0.0f),
-        Vector3(-1.0f,  0.0f,  0.0f),
-        Vector3(-1.0f,  0.0f,  0.0f),
-
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-        Vector3(0.0f,  1.0f,  0.0f),
-
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
@@ -108,12 +150,33 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
 
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+        Vector3(-1.0f,  0.0f,  0.0f),
+
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
         Vector3(1.0f,  0.0f,  0.0f),
-        Vector3(1.0f,  0.0f,  0.0f)
+        Vector3(1.0f,  0.0f,  0.0f),
+
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+        Vector3(0.0f,  1.0f,  0.0f),
+
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),
     };
 
     return Mesh(cubeVertices, cubeIndexes, cubeNormals);

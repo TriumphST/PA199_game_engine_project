@@ -13,6 +13,7 @@ public:
 	Vector3(float all);
 
 	float magnitude();
+	float distance(const Vector3 other);
 	Vector3 normalized();
 	Vector3 opposite();
 	bool operator==(const Vector3& other);

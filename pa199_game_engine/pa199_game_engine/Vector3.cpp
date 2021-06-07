@@ -27,6 +27,11 @@ float Vector3::magnitude()
 	return sqrt(x * x + y * y + z * z);
 }
 
+float Vector3::distance(const Vector3 other)
+{
+	return sqrt(pow((other.x-x),2) + pow((other.y - y), 2) + pow((other.z - z), 2));
+}
+
 Vector3 Vector3::normalized()
 {
 	float mag = magnitude();
@@ -96,6 +101,10 @@ Cylindrical3 Vector3::toCylindrical()
 		//else
 		//	angle = -atan(z / r)+M_PI;
 		angle = atan2(-z, x);
+	}
+	angle = atan2(-z, x);
+	if (angle < 0) {
+		angle = M_PI + (M_PI + angle);
 	}
 	Cylindrical3 res = Cylindrical3(r, angle, y);
 	return res;

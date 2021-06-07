@@ -9,9 +9,9 @@ out vec4 FragColor;
 
 void main()
 {
-    FragColor = vec4(NormalRaw, 1.0);
+    //FragColor = vec4(NormalRaw, 1.0);
     //FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-    return;
+    //return;
     
     vec3 lightPos = vec3(15.0,20.0,20.0);
     vec3 lightColor = vec3(1.0,1.0,1.0);

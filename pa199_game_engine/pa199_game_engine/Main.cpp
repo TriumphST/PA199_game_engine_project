@@ -20,6 +20,7 @@
 #include "Mesh.h"
 #include "Cylindrical3.h"
 #include "Helper.h"
+#include "Ray.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -203,7 +204,7 @@ void wallHit(Gameobject* wall) {
     }
 }
 
-void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::vector<Gameobject*> paddleGOs)
+void checkCollisions()
 {
     // check broad collisions
     Cylindrical3 speherePos = sphere->position.toCylindrical();
@@ -293,6 +294,29 @@ void checkCollisions(Gameobject* sphere, std::vector<Gameobject*> wallGOs, std::
             Vector3 Vn = n * (n.dot(sphere->velocity));
             sphere->velocity = sphere->velocity - Vn*2;
         }
+        else {
+            if(speherePos.angle < paddlePos.angle){ // ball is to the left of the paddle
+                Cylindrical3 A = Cylindrical3(gameSettings.radius_paddles - 0.5f, paddlePos.angle + gameSettings.phi_paddles, 0.0f);
+                Cylindrical3 B = Cylindrical3(gameSettings.radius_paddles + 0.5f, paddlePos.angle + gameSettings.phi_paddles, 0.0f);
+                Vector3 v = B.toCartesian() - A.toCartesian();
+                Ray r = Ray(A.toCartesian(), v);
+                Vector3 closestR = r.closest(sphere->position);
+                float distance = closestR.distance(sphere->position);
+                if (distance <= sphere->scale.x/2.0f)
+                {
+                    // ball touches edge of paddle
+                    Vector3 n = (closestR - sphere->position).normalized();
+                    if (n.dot(sphere->velocity) >= 0.0f)
+                        return;
+                    Vector3 Vn = n * (n.dot(sphere->velocity));
+                    sphere->velocity = sphere->velocity - Vn * 2;
+                }
+            }
+            else // ball is to the right of the paddle
+            {
+
+            }
+        }
     }
 }
 
@@ -365,7 +389,7 @@ int main()
     gameSettings.diameter_paddles = 1.0f;
     gameSettings.phi_paddles = 20.0f;
     gameSettings.radius_border = 12.0f;
-    gameSettings.ballSpeed = 0.1f;
+    gameSettings.ballSpeed = 0.05f;
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
@@ -425,7 +449,7 @@ int main()
         // -----
         processInput(window);
 
-        checkCollisions(sphere, wallGOs, paddleGOs);
+        checkCollisions();
 
         //sphere->rotation = sphere->rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
 
@@ -507,6 +531,8 @@ void processInput(GLFWwindow* window)
         cameraMode = 2;
     if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
         cameraMode = 3;
+    if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+        cameraMode = 4;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if (paddleRotation == 0.0f)
             paddleRotation = -1.0f;

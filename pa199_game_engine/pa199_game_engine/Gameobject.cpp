@@ -72,6 +72,10 @@ void Gameobject::render(float with, float height, int cameraMode)
     {
         cameraPos = Vector3(30.0f, 7.0f, 5.0f);
     }
+    else if (cameraMode == 4)
+    {
+        cameraPos = Vector3(0.0f, -30.0f, 0.000001f);
+    }
     Vector3 cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
     Vector3 cameraDirection = (cameraPos - cameraTarget).normalized();
     Vector3 up = Vector3(0.0f, 1.0f, 0.0f);
