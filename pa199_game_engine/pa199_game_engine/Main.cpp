@@ -414,9 +414,9 @@ int main()
     Shader ourShader("shaders/ambient.vs", "shaders/ambient.fs");
     Shader phongShader("shaders/phong.vs", "shaders/phong.fs");
 
-    Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
-    cube->color = Vector3(0.5f, 0.5f, 0.8f);
-    cube->scale = Vector3(5.0f, 5.0f, 5.0f);
+    //Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
+    //cube->color = Vector3(0.5f, 0.5f, 0.8f);
+    //cube->scale = Vector3(5.0f, 5.0f, 5.0f);
     //cube->position = Vector3(0.0f, 0.0f, 10.0f);
 
     //Gameobject* squere = new Gameobject(phongShader, &squereMesh);
@@ -424,12 +424,17 @@ int main()
     //squere->scale = Vector3(5.0f, 5.0f, 5.0f);
     //squere->rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
 
+    Gameobject * sphere2 = new Gameobject(phongShader, &sphereMesh);
+    sphere2->color = Vector3(0.5f, 0.5f, 0.8f);
+    sphere2->scale = Vector3(5.0f, 5.0f, 5.0f);
+
     sphere = new Gameobject(phongShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
     //GOs.push_back(squere);
-    GOs.push_back(cube);
+    //GOs.push_back(cube);
+    GOs.push_back(sphere2);
     GOs.push_back(sphere);
 
     createPaddles(ourShader);
@@ -451,7 +456,7 @@ int main()
 
         checkCollisions();
 
-        //sphere->rotation = sphere->rotation + Vector3(0.0f, 0.0f, Helper::toRadians(1.0f * dt));
+        //sphere2->rotation = sphere2->rotation + Vector3(0.0f, Helper::toRadians(.5f * dt), 0.0f);
 
         if (isBallReadyToFire == true) 
         {

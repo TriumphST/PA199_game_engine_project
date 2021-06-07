@@ -203,10 +203,6 @@ Mesh MeshGenerator::Sphere(float radius)
     vertices[1] = 0;
     vertices[2] = radius;
 
-    normals[0] = 0.0f;
-    normals[1] = 0.0f;
-    normals[2] = radius;
-
     int i1_prev_prev = -1;
     int i2_prev_prev = -1;
     int i1_prev = -1;
@@ -227,13 +223,6 @@ Mesh MeshGenerator::Sphere(float radius)
         vertices[i2 + 1] = xy * sinf(hAngle2);
         vertices[i1 + 2] = z;                   // z
         vertices[i2 + 2] = -z;
-
-        normals[i1] = vertices[i1];
-        normals[i2] = vertices[i2];
-        normals[i1 + 1] = vertices[i1 + 1];
-        normals[i2 + 1] = vertices[i2 + 1];
-        normals[i1 + 2] = vertices[i1 + 2];
-        normals[i2 + 2] = vertices[i2 + 2];
 
         // next horizontal angles
         hAngle1 += H_ANGLE;
@@ -284,22 +273,17 @@ Mesh MeshGenerator::Sphere(float radius)
     vertices[i1 + 1] = 0;
     vertices[i1 + 2] = -radius;
 
-    normals[i1] = 0.0f;
-    normals[i1 + 1] = 1.0f;
-    normals[i1 + 2] = -radius;
-
     std::vector<Vector3> verticesV3;
-    std::vector<Vector3> normalsV3;
 
     std::size_t i;
     std::size_t count = vertices.size();
     for (i = 0; i < count; i += 3)
     {
-        verticesV3.push_back(Vector3(vertices[i], vertices[i + 1], vertices[i + 2]));
-        normalsV3.push_back(Vector3(normals[i], normals[i + 1], normals[i + 2]));
+        // swap Y and Z to match our coordinate system
+        verticesV3.push_back(Vector3(vertices[i], vertices[i + 2], vertices[i + 1]));
     }
 
-    return Mesh(verticesV3, indexes, normalsV3);
+    return Mesh(verticesV3, indexes, verticesV3); // in this case, normals === vertexes
 }
 
 Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
