@@ -98,6 +98,8 @@ void Gameobject::render(float with, float height, int cameraMode)
     Matrix4 model = Matrix4(1.0f);
     model = model * transM * scaleM * rotM;
     shaderProgram.setMat4("model", model.core);
+    float camPos[3] = { cameraPos.x, cameraPos.y, cameraPos.z };
+    shaderProgram.setVec3("viewPos", camPos);
 
     if (mesh->GetMeshNormals().size() > 0) {
         glEnableVertexAttribArray(1);

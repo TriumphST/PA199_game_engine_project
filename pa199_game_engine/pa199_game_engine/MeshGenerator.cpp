@@ -192,6 +192,7 @@ Mesh MeshGenerator::Sphere(float radius)
 
     std::vector<unsigned int> indexes;
     std::vector<float> vertices(12 * 3);    // array of 12 vertices (x,y,z)
+    std::vector<float> normals(12 * 3);    // array of 12 normals (x,y,z)
     int i1, i2;                             // indices
     float z, xy;                            // coords
     float hAngle1 = -PI / 2 - H_ANGLE / 2;  // start from -126 deg at 1st row
@@ -201,6 +202,10 @@ Mesh MeshGenerator::Sphere(float radius)
     vertices[0] = 0;
     vertices[1] = 0;
     vertices[2] = radius;
+
+    normals[0] = 0.0f;
+    normals[1] = 0.0f;
+    normals[2] = radius;
 
     int i1_prev_prev = -1;
     int i2_prev_prev = -1;
@@ -223,6 +228,13 @@ Mesh MeshGenerator::Sphere(float radius)
         vertices[i1 + 2] = z;                   // z
         vertices[i2 + 2] = -z;
 
+        normals[i1] = vertices[i1];
+        normals[i2] = vertices[i2];
+        normals[i1 + 1] = vertices[i1 + 1];
+        normals[i2 + 1] = vertices[i2 + 1];
+        normals[i1 + 2] = vertices[i1 + 2];
+        normals[i2 + 2] = vertices[i2 + 2];
+
         // next horizontal angles
         hAngle1 += H_ANGLE;
         hAngle2 += H_ANGLE;
@@ -237,19 +249,19 @@ Mesh MeshGenerator::Sphere(float radius)
         if (i2_prev != -1) {
             // bottom
             indexes.push_back(11);
-            indexes.push_back(i2_prev / 3);
             indexes.push_back(i2 / 3);
+            indexes.push_back(i2_prev / 3);
             i2_prev_prev = i2_prev;
         }
         if (i1_prev_prev != -1) {
             indexes.push_back(i1_prev/3);
+            indexes.push_back(i2_prev / 3);
             indexes.push_back(i1/3);
-            indexes.push_back(i2_prev /3);
         }
         if (i2_prev_prev != -1) {
             indexes.push_back(i1 / 3);
-            indexes.push_back(i2 / 3);
             indexes.push_back(i2_prev / 3);
+            indexes.push_back(i2 / 3);
         }
         
         i1_prev = i1;
@@ -272,18 +284,22 @@ Mesh MeshGenerator::Sphere(float radius)
     vertices[i1 + 1] = 0;
     vertices[i1 + 2] = -radius;
 
+    normals[i1] = 0.0f;
+    normals[i1 + 1] = 1.0f;
+    normals[i1 + 2] = -radius;
+
     std::vector<Vector3> verticesV3;
+    std::vector<Vector3> normalsV3;
 
     std::size_t i;
     std::size_t count = vertices.size();
     for (i = 0; i < count; i += 3)
     {
         verticesV3.push_back(Vector3(vertices[i], vertices[i + 1], vertices[i + 2]));
+        normalsV3.push_back(Vector3(normals[i], normals[i + 1], normals[i + 2]));
     }
 
-    std::vector<Vector3> triangleNormals;
-
-    return Mesh(verticesV3, indexes);
+    return Mesh(verticesV3, indexes, normalsV3);
 }
 
 Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)

@@ -424,7 +424,7 @@ int main()
     //squere->scale = Vector3(5.0f, 5.0f, 5.0f);
     //squere->rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
 
-    sphere = new Gameobject(ourShader, &sphereMesh);
+    sphere = new Gameobject(phongShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
