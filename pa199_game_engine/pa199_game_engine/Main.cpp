@@ -410,35 +410,16 @@ int main()
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
 
-    //Shader ourShader("shaders/coordinate_system.vs", "shaders/coordinate_system.fs");
-    Shader ourShader("shaders/ambient.vs", "shaders/ambient.fs");
     Shader phongShader("shaders/phong.vs", "shaders/phong.fs");
-
-    //Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
-    //cube->color = Vector3(0.5f, 0.5f, 0.8f);
-    //cube->scale = Vector3(5.0f, 5.0f, 5.0f);
-    //cube->position = Vector3(0.0f, 0.0f, 10.0f);
-
-    //Gameobject* squere = new Gameobject(phongShader, &squereMesh);
-    //squere->color = Vector3(0.5f, 0.5f, 0.8f);
-    //squere->scale = Vector3(5.0f, 5.0f, 5.0f);
-    //squere->rotation = Vector3(Helper::toRadians(-90.0f), 0.0f, 0.0f);
-
-    Gameobject * sphere2 = new Gameobject(phongShader, &sphereMesh);
-    sphere2->color = Vector3(0.5f, 0.5f, 0.8f);
-    sphere2->scale = Vector3(5.0f, 5.0f, 5.0f);
 
     sphere = new Gameobject(phongShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
-    //GOs.push_back(squere);
-    //GOs.push_back(cube);
-    GOs.push_back(sphere2);
     GOs.push_back(sphere);
 
-    createPaddles(ourShader);
-    //createWalls(ourShader);
+    createPaddles(phongShader);
+    createWalls(phongShader);
 
     resetBall();
 
@@ -538,6 +519,8 @@ void processInput(GLFWwindow* window)
         cameraMode = 3;
     if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
         cameraMode = 4;
+    if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        cameraMode = 5;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         if (paddleRotation == 0.0f)
             paddleRotation = -1.0f;

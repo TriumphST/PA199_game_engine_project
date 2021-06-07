@@ -61,18 +61,22 @@ void Gameobject::render(float with, float height, int cameraMode)
 
     // camera settings
     Vector3 cameraPos;
-    if(cameraMode == 1){
+    if(cameraMode == 1){ // normal front
         cameraPos = Vector3(0.0f, 7.0f, 30.0f);
     }
-    else if (cameraMode == 2)
+    else if (cameraMode == 2) // top
     {
         cameraPos = Vector3(0.0f, 30.0f, 0.000001f);
     }
-    else if (cameraMode == 3)
+    else if (cameraMode == 3) // from right
     {
         cameraPos = Vector3(30.0f, 7.0f, 5.0f);
     }
-    else if (cameraMode == 4)
+    else if (cameraMode == 4)  // from left
+    {
+        cameraPos = Vector3(-30.0f, 7.0f, 5.0f);
+    }
+    else if (cameraMode == 5) // from bottom
     {
         cameraPos = Vector3(0.0f, -30.0f, 0.000001f);
     }

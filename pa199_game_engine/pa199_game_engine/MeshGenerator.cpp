@@ -257,6 +257,15 @@ Mesh MeshGenerator::Sphere(float radius)
         i2_prev = i2;
     }
 
+    // middle last 2 triangles
+    indexes.push_back(i1_prev / 3);
+    indexes.push_back(i2_prev / 3);
+    indexes.push_back(1);
+
+    indexes.push_back(1);
+    indexes.push_back(i2_prev / 3);
+    indexes.push_back(6);
+
     // top last triangle
     indexes.push_back(0);
     indexes.push_back(i1_prev / 3);
@@ -391,5 +400,11 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         vertices[i].x -= distance;
     }
 
-    return Mesh(vertices, indexes);
+    std::vector<Vector3> normals;
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        normals.push_back(vertices[i].normalized());
+    }
+
+    return Mesh(vertices, indexes, normals);
 }
