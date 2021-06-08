@@ -45,11 +45,20 @@ Mesh MeshGenerator::Circle(float radius, int resolution)
     // center vertex
     vertices.push_back(Vector3(0.0f));
 
+    std::vector<Vector2> texCoords;
+    texCoords.push_back(Vector2(0.0f, 0.0f));
+
     Cylindrical3 vertexPos = Cylindrical3(radius, 0.0f, 0.0f);
+    Cylindrical3 vertexTexCoord = Cylindrical3(1.0f, 0.0f, 0.0f);
     for (int i = 0; i < resolution; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
         vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+
+        Vector3 tmp = vertexTexCoord.toCartesian();
+        texCoords.push_back(Vector2(tmp.x, tmp.z));
+        vertexTexCoord.angle += Helper::toRadians(angleBetweenVertexes);
+
 
         normals.push_back(topNormal);
     }
@@ -68,7 +77,7 @@ Mesh MeshGenerator::Circle(float radius, int resolution)
     indexes[indexes.size()-2] = resolution;
     indexes[indexes.size()-1] = 1;
 
-    return Mesh(vertices, indexes, normals);
+    return Mesh(vertices, indexes, normals, texCoords);
 }
 
 Mesh MeshGenerator::Squere()

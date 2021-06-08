@@ -68,7 +68,7 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, bool hasTexture)
         int width, height, nrChannels;
         stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
         // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-        unsigned char* data = stbi_load("D:\\pa199_project\\pa199_game_engine\\pa199_game_engine\\textures\\wall.jpg", &width, &height, &nrChannels, 0);
+        unsigned char* data = stbi_load("D:\\pa199_project\\pa199_game_engine\\pa199_game_engine\\textures\\sand_texture.jpg", &width, &height, &nrChannels, 0);
 
         if (data)
         {
@@ -165,7 +165,7 @@ void Gameobject::render(float with, float height, int cameraMode)
     glUniform1f(vertexTransparencyLocation, transparency);
 
     if (hasTexture) {
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture"), 0);
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture1"), 0);
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texturebuffer);
     }
