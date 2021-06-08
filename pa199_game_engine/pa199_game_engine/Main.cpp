@@ -477,6 +477,9 @@ int main()
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
 
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))

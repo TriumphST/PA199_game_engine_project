@@ -349,13 +349,13 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(i + 1 + numOfLineVertexes); // 11
 
         indexes.push_back(i + 1);
-        indexes.push_back(i + 1 + numOfLineVertexes); // 11
         indexes.push_back(i + 2 + numOfLineVertexes); // 12
+        indexes.push_back(i + 1 + numOfLineVertexes); // 11
 
         // bottom
         indexes.push_back(bottomStartIndex + i + 0); //22
-        indexes.push_back(bottomStartIndex + i + 1); //23
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 1); //23
 
         indexes.push_back(bottomStartIndex + i + 1);
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
@@ -363,8 +363,8 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
         // front
         indexes.push_back(i + 0);
-        indexes.push_back(i + 1);
         indexes.push_back(bottomStartIndex + i + 0);
+        indexes.push_back(i + 1);
 
         indexes.push_back(i + 1);
         indexes.push_back(bottomStartIndex + i + 0);
@@ -376,8 +376,8 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
 
         indexes.push_back(i + 2 + numOfLineVertexes);
-        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
     }
     // first side
     indexes.push_back(0);
@@ -385,8 +385,8 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     indexes.push_back(bottomStartIndex + 0);
 
     indexes.push_back(1 + numOfLineVertexes);
-    indexes.push_back(bottomStartIndex + 0);
     indexes.push_back(bottomStartIndex + 1 + numOfLineVertexes);
+    indexes.push_back(bottomStartIndex + 0);
 
     // last side
     indexes.push_back(numOfLineVertexes); //10
@@ -394,8 +394,8 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     indexes.push_back(bottomStartIndex - 1); //21
 
     indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
-    indexes.push_back(bottomStartIndex - 1); //21
     indexes.push_back(bottomStartIndex + 2* numOfLineVertexes + 1); //43
+    indexes.push_back(bottomStartIndex - 1); //21
 
     for (int i = 0; i < vertices.size(); i++)
     {
