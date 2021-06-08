@@ -467,10 +467,15 @@ int main()
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
+    Gameobject * p = new Gameobject(phongShader, &paddleMesh);
+    p->position = Vector3(0.0f, 0.0f, 0.0f);
+    p->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
+
+    GOs.push_back(p);
     GOs.push_back(sphere);
 
-    createPaddles(ambientShader);
-    createWalls(ambientShader);
+    createPaddles(phongShader);
+    //createWalls(ambientShader);
 
     resetBall();
 
@@ -492,6 +497,7 @@ int main()
         checkCollisions();
 
         //sphere2->rotation = sphere2->rotation + Vector3(0.0f, Helper::toRadians(.5f * dt), 0.0f);
+        p->rotation = p->rotation + Vector3(0.0f, Helper::toRadians(.5f * dt), 0.0f);
 
         if (isBallReadyToFire == true) 
         {

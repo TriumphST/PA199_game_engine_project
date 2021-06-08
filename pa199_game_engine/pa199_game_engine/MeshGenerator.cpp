@@ -300,7 +300,16 @@ Mesh MeshGenerator::Sphere(float radius)
 Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 {
     std::vector<Vector3> vertices;
+    std::vector<Vector3> normals;
     std::vector<unsigned int> indexes;
+
+    Vector3 topNormal = Vector3(0.0f, 1.0f, 0.0f);
+    Vector3 frontNormal = Vector3(0.0f, 0.0f, 1.0f);
+    Vector3 rightNormal = Vector3(1.0f, 0.0f, 0.0f);
+
+    Vector3 bottomNormal = Vector3(0.0f, -1.0f, 0.0f);
+    Vector3 backNormal = Vector3(0.0f, 0.0f, -1.0f);
+    Vector3 leftNormal = Vector3(-1.0f, 0.0f, 0.0f);
 
     float angleBetweenVertexes = (phi * 2) / numOfLineVertexes;
 
@@ -352,6 +361,13 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(i + 2 + numOfLineVertexes); // 12
         indexes.push_back(i + 1 + numOfLineVertexes); // 11
 
+        normals.push_back(topNormal);
+        normals.push_back(topNormal);
+        normals.push_back(topNormal);
+        normals.push_back(topNormal);
+        normals.push_back(topNormal);
+        normals.push_back(topNormal);
+
         // bottom
         indexes.push_back(bottomStartIndex + i + 0); //22
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
@@ -360,6 +376,13 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(bottomStartIndex + i + 1);
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
+
+        normals.push_back(bottomNormal);
+        normals.push_back(bottomNormal);
+        normals.push_back(bottomNormal);
+        normals.push_back(bottomNormal);
+        normals.push_back(bottomNormal);
+        normals.push_back(bottomNormal);
 
         // front
         indexes.push_back(i + 0);
@@ -370,6 +393,13 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(bottomStartIndex + i + 0);
         indexes.push_back(bottomStartIndex + i + 1);
 
+        normals.push_back(leftNormal);
+        normals.push_back(leftNormal);
+        normals.push_back(leftNormal);
+        normals.push_back(leftNormal);
+        normals.push_back(leftNormal);
+        normals.push_back(leftNormal);
+
         // back
         indexes.push_back(i + 1 + numOfLineVertexes);
         indexes.push_back(i + 2 + numOfLineVertexes);
@@ -378,6 +408,14 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
         indexes.push_back(i + 2 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+
+        normals.push_back(rightNormal);
+        normals.push_back(rightNormal);
+        normals.push_back(rightNormal);
+        normals.push_back(rightNormal);
+        normals.push_back(rightNormal);
+        normals.push_back(rightNormal);
+
     }
     // first side
     indexes.push_back(0);
@@ -388,6 +426,13 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     indexes.push_back(bottomStartIndex + 1 + numOfLineVertexes);
     indexes.push_back(bottomStartIndex + 0);
 
+    normals.push_back(frontNormal);
+    normals.push_back(frontNormal);
+    normals.push_back(frontNormal);
+    normals.push_back(frontNormal);
+    normals.push_back(frontNormal);
+    normals.push_back(frontNormal);
+
     // last side
     indexes.push_back(numOfLineVertexes); //10
     indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
@@ -397,16 +442,26 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     indexes.push_back(bottomStartIndex + 2* numOfLineVertexes + 1); //43
     indexes.push_back(bottomStartIndex - 1); //21
 
+    normals.push_back(backNormal);
+    normals.push_back(backNormal);
+    normals.push_back(backNormal);
+    normals.push_back(backNormal);
+    normals.push_back(backNormal);
+    normals.push_back(backNormal);
+
     for (int i = 0; i < vertices.size(); i++)
     {
         vertices[i].x -= distance;
     }
 
-    std::vector<Vector3> normals;
-    for (int i = 0; i < vertices.size(); i++)
+    std::vector<Vector3> vertexedPerNormal(indexes.size());
+    std::vector<unsigned int> remapedIndexes(indexes.size());
+    // remap revtexes becouse of indexing
+    for (int i = 0; i < indexes.size(); i++)
     {
-        normals.push_back(vertices[i].normalized());
+        vertexedPerNormal[i] = vertices[indexes[i]];
+        remapedIndexes[i] = i;
     }
 
-    return Mesh(vertices, indexes, normals);
+    return Mesh(vertexedPerNormal, remapedIndexes, normals);
 }
