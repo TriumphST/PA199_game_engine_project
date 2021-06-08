@@ -60,6 +60,7 @@ std::vector<Gameobject*> GOs;
 Mesh paddleMesh;
 Mesh triangleMesh;
 Mesh squereMesh;
+Mesh circleMesh;
 Mesh cubeMesh;
 Mesh sphereMesh;
 Mesh wallMesh;
@@ -71,6 +72,7 @@ void loadMeshes() {
     paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10, gameSettings.radius_paddles);
     triangleMesh = MeshGenerator::Triangle();
     squereMesh = MeshGenerator::Squere();
+    circleMesh = MeshGenerator::Circle(15.0f, 10);
     cubeMesh = MeshGenerator::Cube();
     sphereMesh = MeshGenerator::Sphere(0.5f);
     wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
@@ -472,8 +474,13 @@ int main()
     sphere = new Gameobject(phongShader, &sphereMesh);
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
-
     GOs.push_back(sphere);
+
+    Gameobject * floor = new Gameobject(phongShader, &circleMesh);
+    floor->position = Vector3(0.0f, -0.5f, 0.0f);
+    floor->rotation = Vector3(0.0f, 0.0f, Helper::toRadians(180));
+    floor->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
+    GOs.push_back(floor);
 
     createPaddles(phongShader);
     createWalls(phongShader);

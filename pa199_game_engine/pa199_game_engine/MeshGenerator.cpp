@@ -1,5 +1,14 @@
 #include "MeshGenerator.h"
 
+Vector3 topNormal = Vector3(0.0f, 1.0f, 0.0f);
+Vector3 frontNormal = Vector3(0.0f, 0.0f, 1.0f);
+Vector3 rightNormal = Vector3(1.0f, 0.0f, 0.0f);
+
+Vector3 bottomNormal = Vector3(0.0f, -1.0f, 0.0f);
+Vector3 backNormal = Vector3(0.0f, 0.0f, -1.0f);
+Vector3 leftNormal = Vector3(-1.0f, 0.0f, 0.0f);
+
+
 Mesh MeshGenerator::Triangle()
 {
     std::vector<Vector3> triangleVertices = {
@@ -11,7 +20,48 @@ Mesh MeshGenerator::Triangle()
     std::vector<unsigned int> triangleIndexes = {
         0, 1, 2
     };
+
+    float texCoords[] = {
+        0.0f, 0.0f,  // lower-left corner  
+        1.0f, 0.0f,  // lower-right corner
+        0.5f, 1.0f   // top-center corner
+    };
     return Mesh(triangleVertices, triangleIndexes);
+}
+
+Mesh MeshGenerator::Circle(float radius, int resolution)
+{
+    float angleBetweenVertexes = (360.0f) / resolution;
+    std::vector<Vector3> vertices;
+    std::vector<Vector3> normals;
+
+    // center vertex
+    vertices.push_back(Vector3(0.0f));
+
+    Cylindrical3 vertexPos = Cylindrical3(radius, 0.0f, 0.0f);
+    for (int i = 0; i < resolution; i++)
+    {
+        vertices.push_back(vertexPos.toCartesian());
+        vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
+
+        normals.push_back(topNormal);
+    }
+
+    std::vector<unsigned int> indexes(resolution * 3);
+
+    for (int i = 0; i < indexes.size()-3; i+=3)
+    {
+        int in = i / 3;
+        indexes[i] = 0;
+        indexes[i+1]= in +1;
+        indexes[i+2]= in +2;
+    }
+
+    indexes[indexes.size()-3] = 0;
+    indexes[indexes.size()-2] = resolution;
+    indexes[indexes.size()-1] = 1;
+
+    return Mesh(vertices, indexes, normals);
 }
 
 Mesh MeshGenerator::Squere()
@@ -302,14 +352,6 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     std::vector<Vector3> vertices;
     std::vector<Vector3> normals;
     std::vector<unsigned int> indexes;
-
-    Vector3 topNormal = Vector3(0.0f, 1.0f, 0.0f);
-    Vector3 frontNormal = Vector3(0.0f, 0.0f, 1.0f);
-    Vector3 rightNormal = Vector3(1.0f, 0.0f, 0.0f);
-
-    Vector3 bottomNormal = Vector3(0.0f, -1.0f, 0.0f);
-    Vector3 backNormal = Vector3(0.0f, 0.0f, -1.0f);
-    Vector3 leftNormal = Vector3(-1.0f, 0.0f, 0.0f);
 
     float angleBetweenVertexes = (phi * 2) / numOfLineVertexes;
 
