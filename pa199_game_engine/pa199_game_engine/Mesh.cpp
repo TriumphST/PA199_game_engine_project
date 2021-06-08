@@ -13,7 +13,7 @@ Mesh::Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes)
 	}
 }
 
-Mesh::Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes, std::vector<Vector3> normals)
+Mesh::Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes, std::vector<Vector3> normals, std::vector<Vector2> texCoords)
 {
 	this->indexesArr = indexes;
 
@@ -32,6 +32,15 @@ Mesh::Mesh(std::vector<Vector3> vertices, std::vector<unsigned int> indexes, std
 		normalsArr[j + 1] = normals[i].y;
 		normalsArr[j + 2] = normals[i].z;
 	}
+
+	if (texCoords.size() > 0) {
+		texCoordsArr = std::vector<float>(texCoords.size() * 2);
+		for (int i = 0, j = 0; i < texCoords.size(); i++, j += 2)
+		{
+			texCoordsArr[j] = texCoords[i].x;
+			texCoordsArr[j + 1] = texCoords[i].y;
+		}
+	}
 }
 
 std::vector<float> Mesh::GetMeshVertexes()
@@ -47,4 +56,9 @@ std::vector<float> Mesh::GetMeshNormals()
 std::vector<unsigned int> Mesh::GetMeshIndexes()
 {
 	return indexesArr;
+}
+
+std::vector<float> Mesh::GetMeshTexCoords()
+{
+	return texCoordsArr;
 }

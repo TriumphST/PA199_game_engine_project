@@ -161,6 +161,7 @@
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
   </ItemGroup>
@@ -177,7 +178,9 @@
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Test.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
@@ -190,6 +193,8 @@
     <None Include="shaders\phong.vs" />
     <None Include="shaders\simpleFragment.fs" />
     <None Include="shaders\simpleVertex.vs" />
+    <None Include="shaders\texture.fs" />
+    <None Include="shaders\texture.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

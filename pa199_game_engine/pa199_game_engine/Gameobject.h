@@ -4,6 +4,7 @@
 #include <vector>
 #include "Shader.h"
 #include "Mesh.h"
+//#include "Texture.h"
 
 //enum MeshType { cube, sphere };
 
@@ -11,7 +12,7 @@ class Gameobject
 {
 public:
     Gameobject() {};
-    Gameobject(Shader shaderProgram, Mesh * mesh);
+    Gameobject(Shader shaderProgram, Mesh * mesh, bool hasTexture = false);
 
     float toRadians(float x);
 
@@ -23,6 +24,8 @@ public:
     Vector3 color;
     float transparency;
     std::vector<float> vertices;
+    //Texture texture;
+    bool hasTexture = false;
     
     void update(float deltaTime);
     void render(float with, float height, int cameraMode);
@@ -37,5 +40,6 @@ private:
     GLuint VBO;
     GLuint elementbuffer;
     GLuint normalbuffer;
+    GLuint texturebuffer;
 };
 

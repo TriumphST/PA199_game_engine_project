@@ -12,21 +12,28 @@ Vector3 leftNormal = Vector3(-1.0f, 0.0f, 0.0f);
 Mesh MeshGenerator::Triangle()
 {
     std::vector<Vector3> triangleVertices = {
-    Vector3(-0.5f, -0.5f, 0.0f),
-    Vector3(0.5f, -0.5f, 0.0f),
-    Vector3(0.0f,  0.5f, 0.0f)
+        Vector3(-0.5f, -0.5f, 0.0f), // LL
+        Vector3(0.5f, -0.5f, 0.0f), //LR
+        Vector3(0.0f,  0.5f, 0.0f) //UT
     };
 
     std::vector<unsigned int> triangleIndexes = {
-        0, 1, 2
+        0, 2, 1
     };
 
-    float texCoords[] = {
-        0.0f, 0.0f,  // lower-left corner  
-        1.0f, 0.0f,  // lower-right corner
-        0.5f, 1.0f   // top-center corner
+    std::vector<Vector3> triangleNormals = {
+        topNormal,
+        topNormal,
+        topNormal,
     };
-    return Mesh(triangleVertices, triangleIndexes);
+
+    std::vector<Vector2> texCoords = {
+        Vector2(0.0f, 0.0f),  // lower-left corner  
+        Vector2(0.5f, 1.0f),   // top-center corner
+        Vector2(1.0f, 0.0f),  // lower-right corner
+    };
+
+    return Mesh(triangleVertices, triangleIndexes, triangleNormals, texCoords);
 }
 
 Mesh MeshGenerator::Circle(float radius, int resolution)

@@ -1,11 +1,16 @@
 #include "Gameobject.h"
 #include "Matrix4.h"
 # define M_PI           3.14159265358979323846
+//#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include <filesystem>
 
-Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh)
+
+Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, bool hasTexture)
 {
     this->mesh = mesh;
     this->triangles = triangles;
+    this->hasTexture = hasTexture;
     position = Vector3(0.0f, 0.0f, 0.0f);
     rotation = Vector3(0.0f, 0.0f, 0.0f);
     scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -42,6 +47,40 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh)
     glGenBuffers(1, &elementbuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
+
+    if (hasTexture == true) {
+        // texture coord attribute
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(2);
+
+        // load and create a texture 
+        // -------------------------
+        glGenTextures(1, &texturebuffer);
+        glBindTexture(GL_TEXTURE_2D, texturebuffer); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // set texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // load image, create texture and generate mipmaps
+        int width, height, nrChannels;
+        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+        // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+        unsigned char* data = stbi_load("D:\\pa199_project\\pa199_game_engine\\pa199_game_engine\\textures\\wall.jpg", &width, &height, &nrChannels, 0);
+
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << std::endl;
+        }
+        stbi_image_free(data);
+    }
 }
 
 float Gameobject::toRadians(float x) {
@@ -124,6 +163,12 @@ void Gameobject::render(float with, float height, int cameraMode)
 
     int vertexTransparencyLocation = glGetUniformLocation(shaderProgram.ID, "transparency");
     glUniform1f(vertexTransparencyLocation, transparency);
+
+    if (hasTexture) {
+        glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture"), 0);
+        // bind Texture
+        glBindTexture(GL_TEXTURE_2D, texturebuffer);
+    }
 
     //glDrawArrays(GL_POINTS, 0, mesh.GetMeshVertexes().size());
     // Index buffer
