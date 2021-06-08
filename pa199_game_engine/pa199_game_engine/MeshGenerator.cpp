@@ -283,6 +283,7 @@ Mesh MeshGenerator::Sphere(float radius)
     vertices[i1 + 2] = -radius;
 
     std::vector<Vector3> verticesV3;
+    std::vector<Vector3> normalsV3;
 
     std::size_t i;
     std::size_t count = vertices.size();
@@ -290,9 +291,10 @@ Mesh MeshGenerator::Sphere(float radius)
     {
         // swap Y and Z to match our coordinate system
         verticesV3.push_back(Vector3(vertices[i], vertices[i + 2], vertices[i + 1]));
+        normalsV3.push_back(verticesV3[i/3].normalized());
     }
 
-    return Mesh(verticesV3, indexes, verticesV3); // in this case, normals === vertexes
+    return Mesh(verticesV3, indexes, normalsV3); // in this case, normals === vertexes
 }
 
 Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)

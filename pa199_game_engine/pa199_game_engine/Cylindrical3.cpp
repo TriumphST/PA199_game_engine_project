@@ -17,6 +17,6 @@ Vector3 Cylindrical3::toCartesian()
 {
     float x = distance * cos(angle);
     float y = distance * sin(angle);
-    Vector3 res = Vector3(x, z, y);
+    Vector3 res = Vector3(x, z, -y);
     return res;
 }
