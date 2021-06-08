@@ -11,6 +11,7 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh)
     scale = Vector3(1.0f, 1.0f, 1.0f);
     velocity = Vector3(0.0f, 0.0f, 0.0f);
     color = Vector3(1.0f, 0.0f, 0.0f);
+    transparency = 1.0f;
 
     //this->vertices = vertices;
 
@@ -120,6 +121,9 @@ void Gameobject::render(float with, float height, int cameraMode)
 
     int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "color");
     glUniform3f(vertexColorLocation, color.x, color.y, color.z);
+
+    int vertexTransparencyLocation = glGetUniformLocation(shaderProgram.ID, "transparency");
+    glUniform1f(vertexTransparencyLocation, transparency);
 
     //glDrawArrays(GL_POINTS, 0, mesh.GetMeshVertexes().size());
     // Index buffer

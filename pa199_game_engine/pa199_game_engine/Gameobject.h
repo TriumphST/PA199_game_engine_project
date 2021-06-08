@@ -21,6 +21,7 @@ public:
     Vector3 scale;
     Vector3 velocity;
     Vector3 color;
+    float transparency;
     std::vector<float> vertices;
     
     void update(float deltaTime);

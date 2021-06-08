@@ -4,6 +4,7 @@ in vec3 Normal;
 in vec3 NormalRaw;
 
 uniform vec3 color;
+uniform float transparency;
 uniform vec3 viewPos;
 
 out vec4 FragColor;
@@ -11,7 +12,7 @@ out vec4 FragColor;
 void main()
 {
     //FragColor = vec4(NormalRaw, 1.0);
-    //FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    //FragColor = vec4(transparency, 0.0, 0.0, 1.0);
     //return;
     
     vec3 lightPos = vec3(15.0,20.0,20.0);
@@ -37,5 +38,5 @@ void main()
     vec3 specular = specularStrength * spec * lightColor;  
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    FragColor = vec4(result, transparency);
 }

@@ -176,6 +176,9 @@ void moveWallsOneLevel() {
         Vector3 newPos = wallGOs[i]->position;
         newPos.y -= 1.0f;
         wallGOs[i]->position = newPos;
+        if (i < gameSettings.numOfWallSegments) {
+            wallGOs[i]->transparency = 1.0f;
+        }
     }
 }
 
@@ -414,6 +417,9 @@ void createWalls(Shader shaderProgram)
             else {
                 wall->color = Vector3(207.0f / 255.0f, 149.0f / 255.0f, 14.0f / 255.0f);
             }
+            if (f > 0) {
+                wall->transparency = 0.2;
+            }
             float rad = Helper::toRadians(angle);
             Cylindrical3 test = wall->position.toCylindrical();
             // rotate towards center
@@ -443,7 +449,7 @@ int main()
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
-    gameSettings.numOfWallFloors = 1;
+    gameSettings.numOfWallFloors = 4;
     gameSettings.radius_wall = 5.0f;
 
     currentLives = gameSettings.maxLives;
@@ -467,15 +473,10 @@ int main()
     sphere->position = Vector3(1.0f, 0.0f, 0.0f);
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
 
-    Gameobject * p = new Gameobject(phongShader, &paddleMesh);
-    p->position = Vector3(0.0f, 0.0f, 0.0f);
-    p->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
-
-    GOs.push_back(p);
     GOs.push_back(sphere);
 
     createPaddles(phongShader);
-    //createWalls(ambientShader);
+    createWalls(phongShader);
 
     resetBall();
 
@@ -484,6 +485,8 @@ int main()
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_FRONT);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // render loop
     // -----------
@@ -497,7 +500,6 @@ int main()
         checkCollisions();
 
         //sphere2->rotation = sphere2->rotation + Vector3(0.0f, Helper::toRadians(.5f * dt), 0.0f);
-        p->rotation = p->rotation + Vector3(0.0f, Helper::toRadians(.5f * dt), 0.0f);
 
         if (isBallReadyToFire == true) 
         {
