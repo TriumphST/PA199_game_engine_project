@@ -46,15 +46,22 @@ struct settings {
     int maxLives;
     int numOfWallSegments;
     int numOfWallFloors;
+    float betweenLevelsTime;
 } gameSettings;
 
 int cameraMode = 1;
 float paddleRotation = 0.0f;
 bool isBallReadyToFire = true;
+float currentBallSpeed;
 int currentLives = gameSettings.maxLives;
 bool isGameOver = false;
 float phi_wall = 0.0f;
 int wallHitCount = 0;
+int score = 0;
+int level = 1;
+
+bool newLevelTimer = false;
+float timer = 0.0f;
 
 Gameobject * sphere;
 std::vector<Gameobject*> wallGOs;
@@ -164,16 +171,38 @@ void fireBall()
     float randomX = ((float(rand()) / float((RAND_MAX)) * a) + b) * posX;
     float randomZ = ((float(rand()) / float((RAND_MAX)) * a) + b) * posZ;
     Vector3 randomTargetPosition = Vector3(randomX,0.0f, randomZ);
-    Vector3 vectorTarget = (sphere->position - randomTargetPosition).normalized() * -gameSettings.ballSpeed;
+    Vector3 vectorTarget = (sphere->position - randomTargetPosition).normalized() * -currentBallSpeed;
     //Vector3 vectorTarget = sphere->position.normalized() * -gameSettings.ballSpeed;
     sphere->velocity = vectorTarget;
     isBallReadyToFire = false;
 }
 
+void resetWall() {
+    for (int f = 0; f < gameSettings.numOfWallFloors; f++)
+    {
+        for (int s = 0; s < gameSettings.numOfWallSegments; s++)
+        {
+            int index = (gameSettings.numOfWallSegments * f) + s;
+            wallGOs[index]->position.y = float(f);
+            wallGOs[index]->isActive = true;
+            if (f == 0) {
+                wallGOs[index]->transparency = 1.0f;
+            }
+            else {
+                wallGOs[index]->transparency = 0.5f;
+            }
+        }
+    }
+}
+
 void restartGame() {
     isGameOver = false;
     resetBall();
+    resetWall();
     currentLives = gameSettings.maxLives;
+    currentBallSpeed = gameSettings.ballSpeed;
+    level = 1;
+    score = 0;
 }
 
 void moveWallsOneLevel(int row) {
@@ -194,6 +223,16 @@ void gameWon() {
     isGameOver = true;
 }
 
+void printStatus() {
+    cout << "Lives: " << currentLives << " " << "Level: " << level << " " << "Score: " << score << endl;
+}
+
+void startNewLevelTimer()
+{
+    timer = 0.0f;
+    newLevelTimer = true;
+}
+
 void wallHit(Gameobject* wall) {
     int a = -1;
     for (int i = 0; i < wallGOs.size(); i++)
@@ -205,10 +244,18 @@ void wallHit(Gameobject* wall) {
 
     wallHitCount++;
     moveWallsOneLevel(a);
+    score += 1 + level - 1;
 
-    if (wallGOs.size() <= 0) {
-        gameWon();
+    if (wallHitCount >= gameSettings.numOfWallFloors*gameSettings.numOfWallSegments) 
+    {
+        
+        wallHitCount = 0;
+        level++;
+        currentBallSpeed += 2.0f;
+        sphere->velocity = sphere->velocity.normalized() * currentBallSpeed;
+        startNewLevelTimer();
     }
+    printStatus();
 }
 
 void checkCollisions()
@@ -448,10 +495,12 @@ int main()
     gameSettings.ballSpeed = 5.0f;
     gameSettings.paddleRotationSpeed = 90.0f; // degrees per second
     gameSettings.maxLives = 3;
-    gameSettings.numOfWallSegments = 10;
-    gameSettings.numOfWallFloors = 4;
+    gameSettings.numOfWallSegments = 3;
+    gameSettings.numOfWallFloors = 2;
     gameSettings.radius_wall = 5.0f;
+    gameSettings.betweenLevelsTime = 2.0f;
 
+    currentBallSpeed = gameSettings.ballSpeed;
     currentLives = gameSettings.maxLives;
     phi_wall = (360.0f / float(gameSettings.numOfWallSegments)) / 2.0f;
 
@@ -513,6 +562,14 @@ int main()
 
         dt = std::chrono::duration<double, std::milli>(now - lastTick).count()/1000.0f;
         lastTick = now;
+
+        if(newLevelTimer == true){
+            timer += dt;
+            if (timer >= gameSettings.betweenLevelsTime) {
+                resetWall();
+                newLevelTimer = false;
+            }
+        }
 
         //cout << dt << endl;
 

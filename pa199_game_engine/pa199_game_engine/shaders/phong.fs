@@ -20,7 +20,7 @@ void main()
     vec3 objectColor = color; //vec3(1.0, 0.5, 0.2);
 
     // ambient
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.5;
     vec3 ambient = ambientStrength * lightColor;
 
     //diffuse
