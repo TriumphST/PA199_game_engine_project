@@ -458,7 +458,7 @@ int main()
     gameSettings.diameter_paddles = 1.0f;
     gameSettings.phi_paddles = 20.0f;
     gameSettings.radius_border = 12.0f;
-    gameSettings.ballSpeed = 0.05f;
+    gameSettings.ballSpeed = 3.0f;
     gameSettings.paddleRotationSpeed = 0.5f;
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
@@ -502,11 +502,11 @@ int main()
     //GOs.push_back(cube);
 
     createPaddles(phongShader);
-    createWalls(phongShader);
+    //createWalls(phongShader);
 
     resetBall();
 
-    std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
+    auto lastTick = std::chrono::high_resolution_clock::now();
     double dt;
 
     // backface culling
@@ -522,7 +522,13 @@ int main()
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        dt = (std::chrono::high_resolution_clock::now() - lastTick).count()/1000.0f;
+        auto now = std::chrono::high_resolution_clock::now();
+
+        dt = std::chrono::duration<double, std::milli>(now - lastTick).count()/1000.0f;
+        lastTick = now;
+
+        //cout << dt << endl;
+
         // input
         // -----
         processInput(window);
@@ -558,7 +564,6 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
-        lastTick = std::chrono::high_resolution_clock::now();
     }
 
     for (int i = 0; i < GOs.size(); i++)
