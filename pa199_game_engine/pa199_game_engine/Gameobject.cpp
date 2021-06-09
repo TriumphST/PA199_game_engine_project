@@ -47,9 +47,11 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, std::string textureName
     }
 
     // indexes
-    glGenBuffers(1, &elementbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
+    if(mesh->GetMeshIndexes().size() > 0){
+        glGenBuffers(1, &elementbuffer);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
+    }
 
     if (textureName.empty() == false) {
         // texture coord attribute
@@ -177,13 +179,18 @@ void Gameobject::render(float with, float height, int cameraMode)
 
     //glDrawArrays(GL_POINTS, 0, mesh.GetMeshVertexes().size());
     // Index buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glDrawElements(
-        GL_TRIANGLES,      // mode
-        mesh->GetMeshIndexes().size(),    // count
-        GL_UNSIGNED_INT,   // type
-        (void*)0           // element array buffer offset
-    );
+    if (mesh->GetMeshIndexes().size() > 0) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+        glDrawElements(
+            GL_TRIANGLES,      // mode
+            mesh->GetMeshIndexes().size(),    // count
+            GL_UNSIGNED_INT,   // type
+            (void*)0           // element array buffer offset
+        );
+    }
+    else {
+        glDrawArrays(GL_TRIANGLES, 0, mesh->GetMeshVertexes().size());
+    }
 }
 
 void Gameobject::clean()

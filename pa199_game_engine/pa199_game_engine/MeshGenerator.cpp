@@ -33,7 +33,7 @@ Mesh MeshGenerator::Triangle()
         Vector2(1.0f, 0.0f),  // lower-right corner
     };
 
-    return Mesh(triangleVertices, triangleIndexes, triangleNormals, texCoords);
+    return Mesh(triangleVertices, triangleNormals, triangleIndexes, texCoords);
 }
 
 Mesh MeshGenerator::Circle(float radius, int resolution)
@@ -77,7 +77,7 @@ Mesh MeshGenerator::Circle(float radius, int resolution)
     indexes[indexes.size()-2] = resolution;
     indexes[indexes.size()-1] = 1;
 
-    return Mesh(vertices, indexes, normals, texCoords);
+    return Mesh(vertices, normals, indexes, texCoords);
 }
 
 Mesh MeshGenerator::Squere()
@@ -104,7 +104,7 @@ Mesh MeshGenerator::Squere()
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
     };
-    return Mesh(squereVertices, squereIndexes, squereNormals);
+    return Mesh(squereVertices, squereNormals, squereIndexes);
 }
 
 Mesh MeshGenerator::Cube()
@@ -181,26 +181,6 @@ Mesh MeshGenerator::Cube()
 
     };
 
-    std::vector<unsigned int> cubeIndexes = {
-        0, 1, 2,
-        3, 4, 5,
-
-        6, 7, 8,
-        9, 10, 11,
-
-        12, 13, 14,
-        15, 16, 17,
-
-        18, 19, 20,
-        21, 22, 23,
-
-        24, 25, 26,
-        27, 28, 29,
-
-        30, 31, 32,
-        33, 34, 35
-    };
-
     std::vector<Vector3> cubeNormals = {
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
@@ -245,7 +225,7 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f, -1.0f,  0.0f),
     };
 
-    return Mesh(cubeVertices, cubeIndexes, cubeNormals);
+    return Mesh(cubeVertices, cubeNormals);
 }
 
 // http://www.songho.ca/opengl/gl_sphere.html
@@ -360,7 +340,7 @@ Mesh MeshGenerator::Sphere(float radius)
         normalsV3.push_back(verticesV3[i/3].normalized());
     }
 
-    return Mesh(verticesV3, indexes, normalsV3); // in this case, normals === vertexes
+    return Mesh(verticesV3, normalsV3, indexes); // in this case, normals === vertexes normalized
 }
 
 Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
@@ -513,13 +493,11 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     }
 
     std::vector<Vector3> vertexedPerNormal(indexes.size());
-    std::vector<unsigned int> remapedIndexes(indexes.size());
     // remap revtexes becouse of indexing
     for (int i = 0; i < indexes.size(); i++)
     {
         vertexedPerNormal[i] = vertices[indexes[i]];
-        remapedIndexes[i] = i;
     }
 
-    return Mesh(vertexedPerNormal, remapedIndexes, normals);
+    return Mesh(vertexedPerNormal, normals);
 }
