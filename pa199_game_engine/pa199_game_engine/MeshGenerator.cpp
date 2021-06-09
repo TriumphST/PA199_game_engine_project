@@ -278,26 +278,26 @@ Mesh MeshGenerator::Sphere(float radius)
         if(i1_prev != -1){
             // top
             indexes.push_back(0);
-            indexes.push_back(i1_prev/3);
             indexes.push_back(i1/3);
+            indexes.push_back(i1_prev/3);
             i1_prev_prev = i1_prev;
         }
         if (i2_prev != -1) {
             // bottom
             indexes.push_back(11);
-            indexes.push_back(i2 / 3);
             indexes.push_back(i2_prev / 3);
+            indexes.push_back(i2 / 3);
             i2_prev_prev = i2_prev;
         }
         if (i1_prev_prev != -1) {
             indexes.push_back(i1_prev/3);
-            indexes.push_back(i2_prev / 3);
             indexes.push_back(i1/3);
+            indexes.push_back(i2_prev / 3);
         }
         if (i2_prev_prev != -1) {
             indexes.push_back(i1 / 3);
-            indexes.push_back(i2_prev / 3);
             indexes.push_back(i2 / 3);
+            indexes.push_back(i2_prev / 3);
         }
         
         i1_prev = i1;
@@ -306,22 +306,22 @@ Mesh MeshGenerator::Sphere(float radius)
 
     // middle last 2 triangles
     indexes.push_back(i1_prev / 3);
-    indexes.push_back(i2_prev / 3);
     indexes.push_back(1);
+    indexes.push_back(i2_prev / 3);
 
     indexes.push_back(1);
-    indexes.push_back(i2_prev / 3);
     indexes.push_back(6);
+    indexes.push_back(i2_prev / 3);
 
     // top last triangle
     indexes.push_back(0);
-    indexes.push_back(i1_prev / 3);
     indexes.push_back(1);
+    indexes.push_back(i1_prev / 3);
 
     // bottom last triangle
     indexes.push_back(11);
-    indexes.push_back(10);
     indexes.push_back(6);
+    indexes.push_back(10);
 
     // the last bottom vertex at (0, 0, -r)
     i1 = 11 * 3;
