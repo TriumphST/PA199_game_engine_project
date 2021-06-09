@@ -53,10 +53,24 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, std::string textureName
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
     }
 
+    if (mesh->GetMeshNormals().size() > 0) {
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
+        glVertexAttribPointer(
+            1,                                // attribute
+            3,                                // size
+            GL_FLOAT,                         // type
+            GL_FALSE,                         // normalized?
+            0,                                // stride
+            (void*)0                          // array buffer offset
+        );
+    }
+
+    // tex coords
     if (textureName.empty() == false) {
         // texture coord attribute
-        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(2);
         //glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshTexCoords().size() * sizeof(float), &mesh->GetMeshTexCoords()[0], GL_STATIC_DRAW);
 
         // load and create a texture 
@@ -98,7 +112,8 @@ float Gameobject::toRadians(float x) {
 
 void Gameobject::update(float deltaTime)
 {
-    this->position = position + velocity;
+    // call ODE solver here
+    this->position = position + velocity * deltaTime;
 }
 
 void Gameobject::render(float with, float height, int cameraMode)
@@ -140,7 +155,6 @@ void Gameobject::render(float with, float height, int cameraMode)
     shaderProgram.setMat4("projection", projection.core);
     shaderProgram.setMat4("view", view.core);
 
-    glBindVertexArray(VAO);
     // calculate the model matrix for each object and pass it to shader before drawing
     Matrix4 transM = Matrix4::translationMatrix(position.x, position.y, position.z);
     Matrix4 scaleM = Matrix4::scaleMatrix(scale.x, scale.y, scale.z);
@@ -154,24 +168,13 @@ void Gameobject::render(float with, float height, int cameraMode)
     float camPos[3] = { cameraPos.x, cameraPos.y, cameraPos.z };
     shaderProgram.setVec3("viewPos", camPos);
 
-    if (mesh->GetMeshNormals().size() > 0) {
-        glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-        glVertexAttribPointer(
-            1,                                // attribute
-            3,                                // size
-            GL_FLOAT,                         // type
-            GL_FALSE,                         // normalized?
-            0,                                // stride
-            (void*)0                          // array buffer offset
-        );
-    }
-
     int vertexColorLocation = glGetUniformLocation(shaderProgram.ID, "color");
     glUniform3f(vertexColorLocation, color.x, color.y, color.z);
 
     int vertexTransparencyLocation = glGetUniformLocation(shaderProgram.ID, "transparency");
     glUniform1f(vertexTransparencyLocation, transparency);
+
+    glBindVertexArray(VAO);
 
     if (textureName.empty() == false) {
         // bind Texture

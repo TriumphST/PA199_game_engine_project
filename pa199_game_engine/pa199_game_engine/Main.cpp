@@ -313,6 +313,7 @@ void checkCollisions()
                 sphere->velocity = sphere->velocity - Vn * 2;
                 //sphere->velocity = Vector3(0.0f);
                 //sphere->position = closestR + n * 1.001f;; // if the paddle is faster than ball, it should push the ball
+                wallHit(wall);
             }
         }
 
