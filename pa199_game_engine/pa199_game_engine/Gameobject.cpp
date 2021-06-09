@@ -112,12 +112,18 @@ float Gameobject::toRadians(float x) {
 
 void Gameobject::update(float deltaTime)
 {
+    if (isActive == false){
+        return;
+    }
     // call ODE solver here
     this->position = position + velocity * deltaTime;
 }
 
 void Gameobject::render(float with, float height, int cameraMode)
 {
+    if (isActive == false) {
+        return;
+    }
     shaderProgram.use();
 
     // create transformations

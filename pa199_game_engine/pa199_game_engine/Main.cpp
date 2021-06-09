@@ -176,15 +176,15 @@ void restartGame() {
     currentLives = gameSettings.maxLives;
 }
 
-void moveWallsOneLevel() {
-    for (int i = 0; i < wallGOs.size(); i++)
+void moveWallsOneLevel(int row) {
+    for (int i = row; i < wallGOs.size(); i+=gameSettings.numOfWallSegments)
     {
         Vector3 newPos = wallGOs[i]->position;
         newPos.y -= 1.0f;
-        wallGOs[i]->position = newPos;
-        if (i < gameSettings.numOfWallSegments) {
-            wallGOs[i]->transparency = 1.0f;
-        }
+        wallGOs[i]->position = newPos;   
+    }
+    if(row+ gameSettings.numOfWallSegments < wallGOs.size()){
+        wallGOs[row + gameSettings.numOfWallSegments]->transparency = 1.0f;
     }
 }
 
@@ -196,25 +196,15 @@ void gameWon() {
 
 void wallHit(Gameobject* wall) {
     int a = -1;
-    int b = -1;
     for (int i = 0; i < wallGOs.size(); i++)
     {
         if (wall == wallGOs[i])
             a = i;
     }
-    wallGOs.erase(wallGOs.begin()+a);
-    for (int i = 0; i < GOs.size(); i++)
-    {
-        if (wall == GOs[i])
-            b = i;
-    }
-    GOs.erase(GOs.begin() + b);
+    wallGOs[a]->isActive = false;
 
     wallHitCount++;
-    if (wallHitCount == gameSettings.numOfWallSegments) {
-        wallHitCount = 0;
-        moveWallsOneLevel();
-    }
+    moveWallsOneLevel(a);
 
     if (wallGOs.size() <= 0) {
         gameWon();
@@ -250,6 +240,9 @@ void checkCollisions()
         for (int i = 0; i < wallGOs.size(); i++)
         {
             Gameobject* wall = wallGOs[i];
+            if (wall->isActive == false) {
+                continue;
+            }
             if (wall->position.y != 0.0f) { // skip those, that are not in corect level
                 continue;
             }
@@ -425,7 +418,7 @@ void createWalls(Shader shaderProgram)
                 wall->color = Vector3(207.0f / 255.0f, 149.0f / 255.0f, 14.0f / 255.0f);
             }
             if (f > 0) {
-                wall->transparency = 0.2;
+                wall->transparency = 0.5;
             }
             float rad = Helper::toRadians(angle);
             Cylindrical3 test = wall->position.toCylindrical();
@@ -452,7 +445,7 @@ int main()
     gameSettings.diameter_paddles = 1.0f;
     gameSettings.phi_paddles = 20.0f;
     gameSettings.radius_border = 12.0f;
-    gameSettings.ballSpeed = 3.0f;
+    gameSettings.ballSpeed = 5.0f;
     gameSettings.paddleRotationSpeed = 90.0f; // degrees per second
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
@@ -482,7 +475,7 @@ int main()
     sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
     GOs.push_back(sphere);
 
-    Gameobject * floor = new Gameobject(textureShader, &circleMesh, "wall.jpg");
+    Gameobject * floor = new Gameobject(textureShader, &circleMesh, "sand.jpg");
     floor->position = Vector3(0.0f, -0.5f, 0.0f);
     //floor->rotation = Vector3(0.0f, 0.0f, Helper::toRadians(180));
     GOs.push_back(floor);
