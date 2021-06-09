@@ -76,16 +76,10 @@ void loadMeshes() {
     paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10, gameSettings.radius_paddles);
     triangleMesh = MeshGenerator::Triangle();
     squereMesh = MeshGenerator::Squere();
-    circleMesh = MeshGenerator::Circle(15.0f, 4);
+    circleMesh = MeshGenerator::Circle(15.0f, 100);
     cubeMesh = MeshGenerator::Cube();
     sphereMesh = MeshGenerator::Sphere(0.5f);
     wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
-}
-
-void loadTextures()
-{
-    Sand = Texture("textures/sand_texture.jpg");
-    
 }
 
 GLFWwindow* openWindow() {
@@ -459,7 +453,7 @@ int main()
     gameSettings.phi_paddles = 20.0f;
     gameSettings.radius_border = 12.0f;
     gameSettings.ballSpeed = 3.0f;
-    gameSettings.paddleRotationSpeed = 0.5f;
+    gameSettings.paddleRotationSpeed = 90.0f; // degrees per second
     gameSettings.maxLives = 3;
     gameSettings.numOfWallSegments = 10;
     gameSettings.numOfWallFloors = 4;
@@ -502,7 +496,7 @@ int main()
     //GOs.push_back(cube);
 
     createPaddles(phongShader);
-    //createWalls(phongShader);
+    createWalls(phongShader);
 
     resetBall();
 
@@ -539,13 +533,13 @@ int main()
 
         if (isBallReadyToFire == true) 
         {
-            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(gameSettings.paddleRotationSpeed * dt), 0.0f);
             sphere->position = rotCenter * sphere->position;
         }
 
         for (int i = 0; i < paddleGOs.size(); i++)
         {
-            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(1.0f * dt), 0.0f);
+            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(gameSettings.paddleRotationSpeed * dt), 0.0f);
             paddleGOs[i]->position = rotCenter * paddleGOs[i]->position;
             float angleY = Helper::getAngleY(Vector3(1.0f, 0.0f, 0.0f), paddleGOs[i]->position.normalized());
             //std::cout << i << ": " << Helper::toDegrees(angleY) << std::endl;

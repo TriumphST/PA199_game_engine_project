@@ -71,7 +71,7 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, std::string textureName
         // texture coord attribute
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(2);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshTexCoords().size() * sizeof(float), &mesh->GetMeshTexCoords()[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mesh->GetMeshTexCoords().size() * sizeof(float), &mesh->GetMeshTexCoords()[0], GL_STATIC_DRAW);
 
         // load and create a texture 
         // -------------------------
