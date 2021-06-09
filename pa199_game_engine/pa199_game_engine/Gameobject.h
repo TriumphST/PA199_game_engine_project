@@ -12,7 +12,7 @@ class Gameobject
 {
 public:
     Gameobject() {};
-    Gameobject(Shader shaderProgram, Mesh * mesh, bool hasTexture = false);
+    Gameobject(Shader shaderProgram, Mesh * mesh, std::string textureName = "");
 
     float toRadians(float x);
 
@@ -25,7 +25,7 @@ public:
     float transparency;
     std::vector<float> vertices;
     //Texture texture;
-    bool hasTexture = false;
+    std::string textureName;
     
     void update(float deltaTime);
     void render(float with, float height, int cameraMode);

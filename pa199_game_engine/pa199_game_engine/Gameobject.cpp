@@ -4,13 +4,16 @@
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include <filesystem>
+#include <iostream>
+
+namespace fs = std::filesystem;
 
 
-Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, bool hasTexture)
+Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, std::string textureName)
 {
     this->mesh = mesh;
     this->triangles = triangles;
-    this->hasTexture = hasTexture;
+    this->textureName = textureName;
     position = Vector3(0.0f, 0.0f, 0.0f);
     rotation = Vector3(0.0f, 0.0f, 0.0f);
     scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -48,10 +51,10 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, bool hasTexture)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->GetMeshIndexes().size() * sizeof(unsigned int), &mesh->GetMeshIndexes()[0], GL_STATIC_DRAW);
 
-    if (hasTexture == true) {
+    if (textureName.empty() == false) {
         // texture coord attribute
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(3);
 
         // load and create a texture 
         // -------------------------
@@ -67,8 +70,11 @@ Gameobject::Gameobject(Shader shaderProgram, Mesh *mesh, bool hasTexture)
         // load image, create texture and generate mipmaps
         int width, height, nrChannels;
         stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-        // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-        unsigned char* data = stbi_load("D:\\pa199_project\\pa199_game_engine\\pa199_game_engine\\textures\\sand_texture.jpg", &width, &height, &nrChannels, 0);
+
+        fs::path currentp = std::filesystem::current_path();
+        std::string filepathstr = currentp.string() + "\\textures\\" + textureName;
+        const char* filepath = filepathstr.c_str();
+        unsigned char* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
 
         if (data)
         {
@@ -164,8 +170,7 @@ void Gameobject::render(float with, float height, int cameraMode)
     int vertexTransparencyLocation = glGetUniformLocation(shaderProgram.ID, "transparency");
     glUniform1f(vertexTransparencyLocation, transparency);
 
-    if (hasTexture) {
-        glUniform1i(glGetUniformLocation(shaderProgram.ID, "texture1"), 0);
+    if (textureName.empty() == false) {
         // bind Texture
         glBindTexture(GL_TEXTURE_2D, texturebuffer);
     }
