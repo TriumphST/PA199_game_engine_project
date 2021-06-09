@@ -319,6 +319,7 @@ void checkCollisions()
         }
         else // closest angle > gameSettings.phi_paddles
         {
+            return; //TODO fix
             Cylindrical3 A = Cylindrical3();
             Cylindrical3 B = Cylindrical3();
             if (angularDirection(speherePos.angle, wallPos.angle) == 1) {
@@ -386,6 +387,7 @@ void checkCollisions()
         }
         else // closest angle > gameSettings.phi_paddles
         { 
+            return; //TODO fix
             Cylindrical3 A = Cylindrical3();
             Cylindrical3 B = Cylindrical3();
             if (angularDirection(speherePos.angle, paddlePos.angle) == 1) {
@@ -495,8 +497,8 @@ int main()
     gameSettings.ballSpeed = 5.0f;
     gameSettings.paddleRotationSpeed = 90.0f; // degrees per second
     gameSettings.maxLives = 3;
-    gameSettings.numOfWallSegments = 3;
-    gameSettings.numOfWallFloors = 2;
+    gameSettings.numOfWallSegments = 10;
+    gameSettings.numOfWallFloors = 4;
     gameSettings.radius_wall = 5.0f;
     gameSettings.betweenLevelsTime = 2.0f;
 
