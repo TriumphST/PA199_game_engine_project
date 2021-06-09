@@ -46,18 +46,19 @@ Mesh MeshGenerator::Circle(float radius, int resolution)
     vertices.push_back(Vector3(0.0f));
 
     std::vector<Vector2> texCoords;
-    texCoords.push_back(Vector2(0.0f, 0.0f));
+    texCoords.push_back(Vector2(0.5f, 0.5f));
 
     Cylindrical3 vertexPos = Cylindrical3(radius, 0.0f, 0.0f);
-    Cylindrical3 vertexTexCoord = Cylindrical3(1.0f, 0.0f, 0.0f);
+    Cylindrical3 vertexTexCoord = Cylindrical3(0.5f, 0.0f, 0.0f);
     for (int i = 0; i < resolution; i++)
     {
         vertices.push_back(vertexPos.toCartesian());
         vertexPos.angle += Helper::toRadians(angleBetweenVertexes);
 
         Vector3 tmp = vertexTexCoord.toCartesian();
-        texCoords.push_back(Vector2(tmp.x, tmp.z));
-        vertexTexCoord.angle += Helper::toRadians(angleBetweenVertexes);
+        texCoords.push_back(Vector2(tmp.x+0.5, tmp.z + 0.5));
+        //texCoords.push_back(Vector2(0.0f, 0.0f));
+        vertexTexCoord.angle -= Helper::toRadians(angleBetweenVertexes);
 
 
         normals.push_back(topNormal);
@@ -130,54 +131,54 @@ Mesh MeshGenerator::Cube()
         front_left_up,
 
         // back face trinagle 1
-        back_left_down,
-        back_right_down,
-        back_right_up,
+        //back_left_down,
+        //back_right_down,
+        //back_right_up,
 
-        // back face trinagle 2
-        back_left_down,
-        back_right_up,
-        back_left_up,
+        //// back face trinagle 2
+        //back_left_down,
+        //back_right_up,
+        //back_left_up,
 
-        // left face trinagle 1
-        back_left_down,
-        front_left_down,
-        front_left_up,
+        //// left face trinagle 1
+        //back_left_down,
+        //front_left_down,
+        //front_left_up,
 
-        // left face trinagle 2
-        back_left_down,
-        front_left_up,
-        front_right_up,
+        //// left face trinagle 2
+        //back_left_down,
+        //front_left_up,
+        //front_right_up,
 
-        // right face trinagle 1
-        front_right_down,
-        back_right_down,
-        back_right_up,
+        //// right face trinagle 1
+        //front_right_down,
+        //back_right_down,
+        //back_right_up,
 
-        // right face trinagle 2
-        front_right_down,
-        back_right_up,
-        front_right_up,
+        //// right face trinagle 2
+        //front_right_down,
+        //back_right_up,
+        //front_right_up,
 
-        // up face trinagle 1
-        front_left_up,
-        front_right_up,
-        back_right_up,
+        //// up face trinagle 1
+        //front_left_up,
+        //front_right_up,
+        //back_right_up,
 
-        // up face trinagle 2
-        front_left_up,
-        back_right_up,
-        back_left_up,
+        //// up face trinagle 2
+        //front_left_up,
+        //back_right_up,
+        //back_left_up,
 
-        // down face trinagle 1
-        front_left_down,
-        front_right_down,
-        back_right_down,
+        //// down face trinagle 1
+        //front_left_down,
+        //front_right_down,
+        //back_right_down,
 
-        // down face trinagle 2
-        front_left_down,
-        back_right_down,
-        back_left_down,
+        //// down face trinagle 2
+        //front_left_down,
+        //back_right_down,
+        //back_left_down,
 
     };
 
@@ -189,7 +190,7 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f,  0.0f, 1.0f),
         Vector3(0.0f,  0.0f, 1.0f),
 
-        Vector3(0.0f,  0.0f, -1.0f),
+        /*Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
         Vector3(0.0f,  0.0f, -1.0f),
@@ -222,7 +223,7 @@ Mesh MeshGenerator::Cube()
         Vector3(0.0f, -1.0f,  0.0f),
         Vector3(0.0f, -1.0f,  0.0f),
         Vector3(0.0f, -1.0f,  0.0f),
-        Vector3(0.0f, -1.0f,  0.0f),
+        Vector3(0.0f, -1.0f,  0.0f),*/
     };
 
     return Mesh(cubeVertices, cubeNormals);
@@ -392,12 +393,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     {
         // top
         indexes.push_back(i + 0);
-        indexes.push_back(i + 1);
         indexes.push_back(i + 1 + numOfLineVertexes); // 11
+        indexes.push_back(i + 1);
 
         indexes.push_back(i + 1);
-        indexes.push_back(i + 2 + numOfLineVertexes); // 12
         indexes.push_back(i + 1 + numOfLineVertexes); // 11
+        indexes.push_back(i + 2 + numOfLineVertexes); // 12
 
         normals.push_back(topNormal);
         normals.push_back(topNormal);
@@ -408,12 +409,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
         // bottom
         indexes.push_back(bottomStartIndex + i + 0); //22
-        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 1); //23
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
 
         indexes.push_back(bottomStartIndex + i + 1);
-        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
 
         normals.push_back(bottomNormal);
         normals.push_back(bottomNormal);
@@ -424,12 +425,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
         // front
         indexes.push_back(i + 0);
-        indexes.push_back(bottomStartIndex + i + 0);
         indexes.push_back(i + 1);
+        indexes.push_back(bottomStartIndex + i + 0);
 
         indexes.push_back(i + 1);
-        indexes.push_back(bottomStartIndex + i + 0);
         indexes.push_back(bottomStartIndex + i + 1);
+        indexes.push_back(bottomStartIndex + i + 0);
 
         normals.push_back(leftNormal);
         normals.push_back(leftNormal);
@@ -440,12 +441,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
         // back
         indexes.push_back(i + 1 + numOfLineVertexes);
-        indexes.push_back(i + 2 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+        indexes.push_back(i + 2 + numOfLineVertexes);
 
         indexes.push_back(i + 2 + numOfLineVertexes);
-        indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
         indexes.push_back(bottomStartIndex + i + 1 + numOfLineVertexes);
+        indexes.push_back(bottomStartIndex + i + 2 + numOfLineVertexes);
 
         normals.push_back(rightNormal);
         normals.push_back(rightNormal);
@@ -457,12 +458,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
     }
     // first side
     indexes.push_back(0);
-    indexes.push_back(1 + numOfLineVertexes);
     indexes.push_back(bottomStartIndex + 0);
+    indexes.push_back(1 + numOfLineVertexes);
 
     indexes.push_back(1 + numOfLineVertexes);
-    indexes.push_back(bottomStartIndex + 1 + numOfLineVertexes);
     indexes.push_back(bottomStartIndex + 0);
+    indexes.push_back(bottomStartIndex + 1 + numOfLineVertexes);
 
     normals.push_back(frontNormal);
     normals.push_back(frontNormal);
@@ -473,12 +474,12 @@ Mesh MeshGenerator::Paddle(float phi, int numOfLineVertexes, float distance)
 
     // last side
     indexes.push_back(numOfLineVertexes); //10
-    indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
     indexes.push_back(bottomStartIndex - 1); //21
+    indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
 
     indexes.push_back(bottomStartIndex + numOfLineVertexes); //32
-    indexes.push_back(bottomStartIndex + 2* numOfLineVertexes + 1); //43
     indexes.push_back(bottomStartIndex - 1); //21
+    indexes.push_back(bottomStartIndex + 2* numOfLineVertexes + 1); //43
 
     normals.push_back(backNormal);
     normals.push_back(backNormal);

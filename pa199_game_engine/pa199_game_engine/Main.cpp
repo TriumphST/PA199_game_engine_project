@@ -76,7 +76,7 @@ void loadMeshes() {
     paddleMesh = MeshGenerator::Paddle(gameSettings.phi_paddles, 10, gameSettings.radius_paddles);
     triangleMesh = MeshGenerator::Triangle();
     squereMesh = MeshGenerator::Squere();
-    circleMesh = MeshGenerator::Circle(15.0f, 100);
+    circleMesh = MeshGenerator::Circle(15.0f, 4);
     cubeMesh = MeshGenerator::Cube();
     sphereMesh = MeshGenerator::Sphere(0.5f);
     wallMesh = MeshGenerator::Paddle(phi_wall, 10, gameSettings.radius_wall);
@@ -489,12 +489,16 @@ int main()
 
     Gameobject * floor = new Gameobject(textureShader, &circleMesh, "wall.jpg");
     floor->position = Vector3(0.0f, -0.5f, 0.0f);
-    floor->rotation = Vector3(0.0f, 0.0f, Helper::toRadians(180));
+    //floor->rotation = Vector3(0.0f, 0.0f, Helper::toRadians(180));
     GOs.push_back(floor);
 
     //Gameobject * triangle = new Gameobject(textureShader, &triangleMesh, true);
     //triangle->scale = Vector3(5.0f, 5.0f, 5.0f);
     //GOs.push_back(triangle);
+
+    //Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
+    //cube->scale = Vector3(5.0f, 5.0f, 5.0f);
+    //GOs.push_back(cube);
 
     createPaddles(phongShader);
     createWalls(phongShader);
@@ -504,8 +508,12 @@ int main()
     std::chrono::high_resolution_clock::time_point lastTick = std::chrono::high_resolution_clock::now();
     double dt;
 
+    // backface culling
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+
+    // transparency
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
