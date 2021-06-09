@@ -1,7 +1,13 @@
 # PA199_project
 This is a school assignemnt project of implementation of game engine and “circular” breakout game in 3D. Everything is created from scratch in C++, OpenGL and GLSL. 
 
-Implemented:
+**Controlls:**
+
+- Paddle movement - A,D keys
+- Launch ball - spacebar
+
+
+**Implemented:**
 - Math:
   - Vectors
   - Matrixes
@@ -26,23 +32,24 @@ Implemented:
   - paddle (curved prism)
   - circle
 
-Timeline:
-**Week 15**
+**Timeline:**
+
+_Week 15_
  - Implemented Mesh generations (normals, texture coords), phong shading, textures
 
-**Week 14**
+_Week 14_
  - Implemented Mesh generations (vertexes, indexes), rendering, colors
 
-**Week 13**
+_Week 13_
  - Implemented Collision detection sphere - paddles
 
-**Week 9**
+_Week 9_
  - Implemented Vectors, Matrixes, Ray, Coordinate systems
 
-**Week 3**
+_Week 3_
  - Implemented Vector3
 
-**Week 1**
+_Week 1_
 - project setup
 - GLFW and glad
 - open empty window test
