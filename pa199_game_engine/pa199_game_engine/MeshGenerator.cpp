@@ -320,8 +320,8 @@ Mesh MeshGenerator::Sphere(float radius)
 
     // bottom last triangle
     indexes.push_back(11);
-    indexes.push_back(6);
     indexes.push_back(10);
+    indexes.push_back(6);
 
     // the last bottom vertex at (0, 0, -r)
     i1 = 11 * 3;
