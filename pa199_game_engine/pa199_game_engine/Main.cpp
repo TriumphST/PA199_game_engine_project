@@ -42,6 +42,7 @@ struct settings {
     int maxLives;
     int numOfWallSegments;
     int numOfWallFloors;
+    int numOfBalls;
     float betweenLevelsTime;
 } gameSettings;
 
@@ -55,11 +56,12 @@ float phi_wall = 0.0f;
 int wallHitCount = 0;
 int score = 0;
 int level = 1;
+int currentBallsOut = 0;
 
 bool newLevelTimer = false;
 float timer = 0.0f;
 
-Gameobject * sphere;
+std::vector <Gameobject*> sphereGOs;
 std::vector<Gameobject*> wallGOs;
 std::vector<Gameobject*> paddleGOs;
 std::vector<Gameobject*> GOs;
@@ -140,12 +142,17 @@ int angularDirection(int alpha, int beta) {
     return 1;
 }
 
-void resetBall()
+void resetBalls()
 {
-    Vector3 vectorCenter = paddleGOs[0]->position.normalized()*-1.5;
-    sphere->position = paddleGOs[0]->position + vectorCenter;
-    sphere->velocity = Vector3(0.0f);
-    isBallReadyToFire = true;
+    for (int i = 0; i < sphereGOs.size(); i++)
+    {
+        Vector3 vectorCenter = paddleGOs[i]->position.normalized() * -1.5;
+        sphereGOs[i]->position = paddleGOs[i]->position + vectorCenter;
+        sphereGOs[i]->velocity = Vector3(0.0f);
+        sphereGOs[i]->isActive = true;
+        isBallReadyToFire = true;
+    }
+
 }
 
 void fireBall()
@@ -153,23 +160,26 @@ void fireBall()
     if(isBallReadyToFire == false) {
         return;
     }
-    srand((unsigned int)time(NULL));
-    float a = 3.0f;
-    float b = 2.0f;
-    int posX = (rand() % 2);
-    if (posX == 0)
-        posX = -1;
+    for (int i = 0; i < sphereGOs.size(); i++)
+    {
+        srand((unsigned int)time(NULL));
+        float a = 3.0f;
+        float b = 2.0f;
+        int posX = (rand() % 2);
+        if (posX == 0)
+            posX = -1;
 
-    int posZ = (rand() % 2);
-    if (posZ == 0)
-        posZ = -1;
+        int posZ = (rand() % 2);
+        if (posZ == 0)
+            posZ = -1;
 
-    float randomX = ((float(rand()) / float((RAND_MAX)) * a) + b) * posX;
-    float randomZ = ((float(rand()) / float((RAND_MAX)) * a) + b) * posZ;
-    Vector3 randomTargetPosition = Vector3(randomX,0.0f, randomZ);
-    Vector3 vectorTarget = (sphere->position - randomTargetPosition).normalized() * -currentBallSpeed;
-    //Vector3 vectorTarget = sphere->position.normalized() * -gameSettings.ballSpeed;
-    sphere->velocity = vectorTarget;
+        float randomX = ((float(rand()) / float((RAND_MAX)) * a) + b) * posX;
+        float randomZ = ((float(rand()) / float((RAND_MAX)) * a) + b) * posZ;
+        Vector3 randomTargetPosition = Vector3(randomX, 0.0f, randomZ);
+        Vector3 vectorTarget = (sphereGOs[i]->position - randomTargetPosition).normalized() * -currentBallSpeed;
+        sphereGOs[i]->velocity = vectorTarget;
+    }
+
     isBallReadyToFire = false;
 }
 
@@ -193,7 +203,7 @@ void resetWall() {
 
 void restartGame() {
     isGameOver = false;
-    resetBall();
+    resetBalls();
     resetWall();
     currentLives = gameSettings.maxLives;
     currentBallSpeed = gameSettings.ballSpeed;
@@ -229,7 +239,11 @@ void startNewLevelTimer()
     newLevelTimer = true;
 }
 
-void wallHit(Gameobject* wall) {
+void wallHit(Gameobject* wall, Gameobject* sphere) {
+    if (wall->isActive == false) {
+        return;
+    }
+
     int a = -1;
     for (int i = 0; i < wallGOs.size(); i++)
     {
@@ -257,161 +271,174 @@ void wallHit(Gameobject* wall) {
 void checkCollisions()
 {
     // check broad collisions
-    Cylindrical3 speherePos = sphere->position.toCylindrical();
-
-    if (speherePos.distance > gameSettings.radius_border + (sphere->scale.x / 5))
+    for (int i = 0; i < sphereGOs.size(); i++)
     {
-        // ball is out of game area
-        currentLives--;
-        std::cout << "Current lives: " << currentLives << std::endl;
-        if (currentLives <= 0) {
-            std::cout << "Game Over!" << std::endl;
-            std::cout << "Press ENTER to restart the game" << std::endl;
-            isGameOver = true;
+        Gameobject* sphere = sphereGOs[i];
+        if (sphere->isActive == false) {
+            continue;
         }
-        resetBall();
-    }
-    // from center to wall radius + helf of wall diameter + half of shere radius
-    else if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 2)
-        && speherePos.distance > gameSettings.radius_wall - (gameSettings.diameter_wall / 2) - (sphere->scale.x / 2))
-    {
-        if (wallGOs.size() <= 0)
-            return;
-        // check wall collision
-        int closestIndex = 0;
-        float closestAngle = 1000.0f;
-        for (int i = 0; i < wallGOs.size(); i++)
-        {
-            Gameobject* wall = wallGOs[i];
-            if (wall->isActive == false) {
-                continue;
-            }
-            if (wall->position.y != 0.0f) { // skip those, that are not in corect level
-                continue;
-            }
-            Cylindrical3 wallPos = wall->position.toCylindrical();
-            float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(wallPos.angle));
-            if (angleDiff < closestAngle) {
-                closestAngle = angleDiff;
-                closestIndex = i;
-            }
-        }
+        Cylindrical3 speherePos = sphere->position.toCylindrical();
 
-        // check closest wall collision
-        Gameobject* wall = wallGOs[closestIndex];
-        Cylindrical3 wallPos = wall->position.toCylindrical();
-        if (closestAngle <= phi_wall) {
-            // ball is colliding with the wall
-            float dir = 1.0f;
-            if (speherePos.distance < gameSettings.radius_wall) {
-                dir = -1.0f;
-            }
-            Vector3 n = sphere->position.normalized() * dir;
-            if (n.dot(sphere->velocity) >= 0.0f)
-                return;
-            Vector3 Vn = n * (n.dot(sphere->velocity));
-            sphere->velocity = sphere->velocity - (Vn * 2);
-            wallHit(wall);
-        }
-        else // closest angle > gameSettings.phi_paddles
+        if (speherePos.distance > gameSettings.radius_border + (sphere->scale.x / 5))
         {
-            return; //TODO fix
-            Cylindrical3 A = Cylindrical3();
-            Cylindrical3 B = Cylindrical3();
-            if (angularDirection(speherePos.angle, wallPos.angle) == 1) {
-                A = Cylindrical3(gameSettings.radius_wall - 0.5f, wallPos.angle + Helper::toRadians(phi_wall), 0.0f);
-                B = Cylindrical3(gameSettings.radius_wall + 0.5f, wallPos.angle + Helper::toRadians(phi_wall), 0.0f);
+            // ball is out of game area
+            sphere->isActive = false;
+            currentBallsOut++;
+            if(currentBallsOut >= gameSettings.numOfBalls){
+                resetBalls();
+                currentBallsOut = 0;
+                currentLives--;
             }
-            else {
-                A = Cylindrical3(gameSettings.radius_wall - 0.5f, wallPos.angle - Helper::toRadians(phi_wall), 0.0f);
-                B = Cylindrical3(gameSettings.radius_wall + 0.5f, wallPos.angle - Helper::toRadians(phi_wall), 0.0f);
-            }
-            Vector3 v = B.toCartesian() - A.toCartesian();
-            Ray r = Ray(A.toCartesian(), v);
-            Vector3 closestR = r.closest(sphere->position);
-            if (closestR.toCylindrical().distance < gameSettings.radius_wall - 0.5f)
-                closestR = A.toCartesian();
-            if (closestR.toCylindrical().distance > gameSettings.radius_wall + 0.5f)
-                closestR = B.toCartesian();
-            float distance = closestR.distance(sphere->position);
-            if (distance <= sphere->scale.x / 2.0f)
-            {
-                // ball touches edge of paddle
-                Vector3 n = (closestR - sphere->position).normalized();
-                //if (n.dot(sphere->velocity) >= 0.0f)
-                //    return;
-                Vector3 Vn = n * (n.dot(sphere->velocity));
-                sphere->velocity = sphere->velocity - Vn * 2;
-                //sphere->velocity = Vector3(0.0f);
-                //sphere->position = closestR + n * 1.001f;; // if the paddle is faster than ball, it should push the ball
-                wallHit(wall);
-            }
-        }
-
-    }
-    else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2.0f) - (sphere->scale.x / 2.0f))
-    {
-        // check paddle collision
-        int closestIndex = 0;
-        float closestAngle = 1000.0f;
-        for (int i = 0; i < paddleGOs.size(); i++)
-        {
-            Gameobject* paddle = paddleGOs[i];
-            Cylindrical3 paddlePos = paddle->position.toCylindrical();
-            float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(paddlePos.angle));
-            if (angleDiff < closestAngle) {
-                closestAngle = angleDiff;
-                closestIndex = i;
-            }
-        }
-
-        // check closest paddle collision
-        Gameobject* paddle = paddleGOs[closestIndex];
-        Cylindrical3 paddlePos = paddle->position.toCylindrical();
-        if (closestAngle <= gameSettings.phi_paddles) {
-            // ball is colliding with the paddle
-            float dir = 1.0f;
-            if (speherePos.distance < gameSettings.radius_paddles) {
-                dir = -1.0f;
+            std::cout << "Current lives: " << currentLives << std::endl;
+            if (currentLives <= 0) {
+                std::cout << "Game Over!" << std::endl;
+                std::cout << "Press ENTER to restart the game" << std::endl;
+                isGameOver = true;
             }
             
-            Vector3 n = sphere->position.normalized() * dir;
-            if (n.dot(sphere->velocity) >= 0.0f)
-                return;
-            Vector3 Vn = n * (n.dot(sphere->velocity));
-            sphere->velocity = sphere->velocity - Vn*2;
         }
-        else // closest angle > gameSettings.phi_paddles
-        { 
-            return; //TODO fix
-            Cylindrical3 A = Cylindrical3();
-            Cylindrical3 B = Cylindrical3();
-            if (angularDirection(speherePos.angle, paddlePos.angle) == 1) {
-                A = Cylindrical3(gameSettings.radius_paddles - 0.5f, paddlePos.angle + Helper::toRadians(gameSettings.phi_paddles), 0.0f);
-                B = Cylindrical3(gameSettings.radius_paddles + 0.5f, paddlePos.angle + Helper::toRadians(gameSettings.phi_paddles), 0.0f);
-            }
-            else {
-                A = Cylindrical3(gameSettings.radius_paddles - 0.5f, paddlePos.angle - Helper::toRadians(gameSettings.phi_paddles), 0.0f);
-                B = Cylindrical3(gameSettings.radius_paddles + 0.5f, paddlePos.angle - Helper::toRadians(gameSettings.phi_paddles), 0.0f);
-            }
-            Vector3 v = B.toCartesian() - A.toCartesian();
-            Ray r = Ray(A.toCartesian(), v);
-            Vector3 closestR = r.closest(sphere->position);
-            if (closestR.toCylindrical().distance < gameSettings.radius_paddles - 0.5f)
-                closestR = A.toCartesian();
-            if (closestR.toCylindrical().distance > gameSettings.radius_paddles + 0.5f)
-                closestR = B.toCartesian();
-            float distance = closestR.distance(sphere->position);
-            if (distance <= sphere->scale.x/2.0f)
+        // from center to wall radius + helf of wall diameter + half of shere radius
+        else if (speherePos.distance < gameSettings.radius_wall + (gameSettings.diameter_wall / 2) + (sphere->scale.x / 2)
+            && speherePos.distance > gameSettings.radius_wall - (gameSettings.diameter_wall / 2) - (sphere->scale.x / 2))
+        {
+            if (wallGOs.size() <= 0)
+                return;
+            // check wall collision
+            int closestIndex = 0;
+            float closestAngle = 1000.0f;
+            for (int i = 0; i < wallGOs.size(); i++)
             {
-                // ball touches edge of paddle
-                Vector3 n = (closestR - sphere->position).normalized();
-                //if (n.dot(sphere->velocity) >= 0.0f)
-                //    return;
+                Gameobject* wall = wallGOs[i];
+                if (wall->isActive == false) {
+                    continue;
+                }
+                if (wall->position.y != 0.0f) { // skip those, that are not in corect level
+                    continue;
+                }
+                Cylindrical3 wallPos = wall->position.toCylindrical();
+                float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(wallPos.angle));
+                if (angleDiff < closestAngle) {
+                    closestAngle = angleDiff;
+                    closestIndex = i;
+                }
+            }
+
+            // check closest wall collision
+            Gameobject* wall = wallGOs[closestIndex];
+            Cylindrical3 wallPos = wall->position.toCylindrical();
+            if (closestAngle <= phi_wall) {
+                // ball is colliding with the wall
+                float dir = 1.0f;
+                if (speherePos.distance < gameSettings.radius_wall) {
+                    dir = -1.0f;
+                }
+                Vector3 n = sphere->position.normalized() * dir;
+                if (n.dot(sphere->velocity) >= 0.0f)
+                    return;
                 Vector3 Vn = n * (n.dot(sphere->velocity));
-                sphere->velocity = sphere->velocity - Vn * 2;
-                //sphere->velocity = Vector3(0.0f);
-                //sphere->position = closestR + n * 1.001f;; // if the paddle is faster than ball, it should push the ball
+                sphere->velocity = sphere->velocity - (Vn * 2);
+                wallHit(wall, sphere);
+            }
+            else // closest angle > gameSettings.phi_paddles
+            {
+                return; //TODO fix
+                Cylindrical3 A = Cylindrical3();
+                Cylindrical3 B = Cylindrical3();
+                if (angularDirection(speherePos.angle, wallPos.angle) == 1) {
+                    A = Cylindrical3(gameSettings.radius_wall - 0.5f, wallPos.angle + Helper::toRadians(phi_wall), 0.0f);
+                    B = Cylindrical3(gameSettings.radius_wall + 0.5f, wallPos.angle + Helper::toRadians(phi_wall), 0.0f);
+                }
+                else {
+                    A = Cylindrical3(gameSettings.radius_wall - 0.5f, wallPos.angle - Helper::toRadians(phi_wall), 0.0f);
+                    B = Cylindrical3(gameSettings.radius_wall + 0.5f, wallPos.angle - Helper::toRadians(phi_wall), 0.0f);
+                }
+                Vector3 v = B.toCartesian() - A.toCartesian();
+                Ray r = Ray(A.toCartesian(), v);
+                Vector3 closestR = r.closest(sphere->position);
+                if (closestR.toCylindrical().distance < gameSettings.radius_wall - 0.5f)
+                    closestR = A.toCartesian();
+                if (closestR.toCylindrical().distance > gameSettings.radius_wall + 0.5f)
+                    closestR = B.toCartesian();
+                float distance = closestR.distance(sphere->position);
+                if (distance <= sphere->scale.x / 2.0f)
+                {
+                    // ball touches edge of paddle
+                    Vector3 n = (closestR - sphere->position).normalized();
+                    //if (n.dot(sphere->velocity) >= 0.0f)
+                    //    return;
+                    Vector3 Vn = n * (n.dot(sphere->velocity));
+                    sphere->velocity = sphere->velocity - Vn * 2;
+                    //sphere->velocity = Vector3(0.0f);
+                    //sphere->position = closestR + n * 1.001f;; // if the paddle is faster than ball, it should push the ball
+                    wallHit(wall, sphere);
+                }
+            }
+
+        }
+        else if (speherePos.distance > gameSettings.radius_paddles - (gameSettings.diameter_paddles / 2.0f) - (sphere->scale.x / 2.0f))
+        {
+            // check paddle collision
+            int closestIndex = 0;
+            float closestAngle = 1000.0f;
+            for (int i = 0; i < paddleGOs.size(); i++)
+            {
+                Gameobject* paddle = paddleGOs[i];
+                Cylindrical3 paddlePos = paddle->position.toCylindrical();
+                float angleDiff = angularDistance(Helper::toDegrees(speherePos.angle), Helper::toDegrees(paddlePos.angle));
+                if (angleDiff < closestAngle) {
+                    closestAngle = angleDiff;
+                    closestIndex = i;
+                }
+            }
+
+            // check closest paddle collision
+            Gameobject* paddle = paddleGOs[closestIndex];
+            Cylindrical3 paddlePos = paddle->position.toCylindrical();
+            if (closestAngle <= gameSettings.phi_paddles) {
+                // ball is colliding with the paddle
+                float dir = 1.0f;
+                if (speherePos.distance < gameSettings.radius_paddles) {
+                    dir = -1.0f;
+                }
+            
+                Vector3 n = sphere->position.normalized() * dir;
+                if (n.dot(sphere->velocity) >= 0.0f)
+                    return;
+                Vector3 Vn = n * (n.dot(sphere->velocity));
+                sphere->velocity = sphere->velocity - Vn*2;
+            }
+            else // closest angle > gameSettings.phi_paddles
+            { 
+                return; //TODO fix
+                Cylindrical3 A = Cylindrical3();
+                Cylindrical3 B = Cylindrical3();
+                if (angularDirection(speherePos.angle, paddlePos.angle) == 1) {
+                    A = Cylindrical3(gameSettings.radius_paddles - 0.5f, paddlePos.angle + Helper::toRadians(gameSettings.phi_paddles), 0.0f);
+                    B = Cylindrical3(gameSettings.radius_paddles + 0.5f, paddlePos.angle + Helper::toRadians(gameSettings.phi_paddles), 0.0f);
+                }
+                else {
+                    A = Cylindrical3(gameSettings.radius_paddles - 0.5f, paddlePos.angle - Helper::toRadians(gameSettings.phi_paddles), 0.0f);
+                    B = Cylindrical3(gameSettings.radius_paddles + 0.5f, paddlePos.angle - Helper::toRadians(gameSettings.phi_paddles), 0.0f);
+                }
+                Vector3 v = B.toCartesian() - A.toCartesian();
+                Ray r = Ray(A.toCartesian(), v);
+                Vector3 closestR = r.closest(sphere->position);
+                if (closestR.toCylindrical().distance < gameSettings.radius_paddles - 0.5f)
+                    closestR = A.toCartesian();
+                if (closestR.toCylindrical().distance > gameSettings.radius_paddles + 0.5f)
+                    closestR = B.toCartesian();
+                float distance = closestR.distance(sphere->position);
+                if (distance <= sphere->scale.x/2.0f)
+                {
+                    // ball touches edge of paddle
+                    Vector3 n = (closestR - sphere->position).normalized();
+                    //if (n.dot(sphere->velocity) >= 0.0f)
+                    //    return;
+                    Vector3 Vn = n * (n.dot(sphere->velocity));
+                    sphere->velocity = sphere->velocity - Vn * 2;
+                    //sphere->velocity = Vector3(0.0f);
+                    //sphere->position = closestR + n * 1.001f;; // if the paddle is faster than ball, it should push the ball
+                }
             }
         }
     }
@@ -497,6 +524,7 @@ int main()
     gameSettings.numOfWallFloors = 4;
     gameSettings.radius_wall = 5.0f;
     gameSettings.betweenLevelsTime = 2.0f;
+    gameSettings.numOfBalls = 3;
 
     currentBallSpeed = gameSettings.ballSpeed;
     currentLives = gameSettings.maxLives;
@@ -517,10 +545,15 @@ int main()
     Shader ambientShader("shaders/ambient.vs", "shaders/ambient.fs");
     Shader textureShader("shaders/texture.vs", "shaders/texture.fs");
 
-    sphere = new Gameobject(phongShader, &sphereMesh);
-    sphere->position = Vector3(1.0f, 0.0f, 0.0f);
-    sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
-    GOs.push_back(sphere);
+    for (int i = 0; i < gameSettings.numOfBalls; i++)
+    {
+        Gameobject * sphere = new Gameobject(phongShader, &sphereMesh);
+        sphere->position = Vector3(float(i), 0.0f, 0.0f);
+        sphere->color = Vector3(170.0f / 255.0f, 174.0f / 255.0f, 181.0f / 255.0f);
+        GOs.push_back(sphere);
+        sphereGOs.push_back(sphere);
+    }
+    
 
     Gameobject * floor = new Gameobject(textureShader, &circleMesh, "sand.jpg");
     floor->position = Vector3(0.0f, -0.5f, 0.0f);
@@ -538,7 +571,7 @@ int main()
     createPaddles(phongShader);
     createWalls(phongShader);
 
-    resetBall();
+    resetBalls();
 
     auto lastTick = std::chrono::high_resolution_clock::now();
     double dt;
@@ -581,8 +614,12 @@ int main()
 
         if (isBallReadyToFire == true) 
         {
-            Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(gameSettings.paddleRotationSpeed * dt), 0.0f);
-            sphere->position = rotCenter * sphere->position;
+            for (int i = 0; i < sphereGOs.size(); i++)
+            {
+                Matrix4 rotCenter = Matrix4::rotationMatrix(0.0f, paddleRotation * Helper::toRadians(gameSettings.paddleRotationSpeed * dt), 0.0f);
+                sphereGOs[i]->position = rotCenter * sphereGOs[i]->position;
+            }
+            
         }
 
         for (int i = 0; i < paddleGOs.size(); i++)
