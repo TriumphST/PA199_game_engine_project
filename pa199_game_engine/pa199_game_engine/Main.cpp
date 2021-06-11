@@ -169,7 +169,8 @@ void fireBall(bool shootRandomly = true)
         sphereGOs[i]->velocity = vectorTarget;
         }
         else {
-            sphereGOs[i]->velocity = sphereGOs[i]->position.normalized() * -currentBallSpeed;
+            //sphereGOs[i]->velocity = sphereGOs[i]->position.normalized() * -currentBallSpeed;
+            sphereGOs[i]->velocity = Vector3(1.0f, 0.0f, 0.0f) * currentBallSpeed;
         }
     }
 
@@ -428,8 +429,8 @@ bool checkCollisionWithSides(Gameobject * sphere, Gameobject * object, float phi
     float distance = closestR.distance(sphere->position);
     if (distance <= sphere->scale.x / 2.0f)
     {
-        // ball touches edge of paddle
-        Vector3 n = (closestR - sphere->position).normalized();
+        // ball touches side of object
+        Vector3 n = (sphere->position - closestR).normalized();
         bounceSphere(n, sphere);
         return true;
     }
@@ -604,11 +605,11 @@ int main()
     gameSettings.ballSpeed = 5.0f;
     gameSettings.paddleRotationSpeed = 90.0f; // degrees per second
     gameSettings.maxLives = 3;
-    gameSettings.numOfWallSegments = 3;
-    gameSettings.numOfWallFloors = 1;
+    gameSettings.numOfWallSegments = 10;
+    gameSettings.numOfWallFloors = 4;
     gameSettings.radius_wall = 5.0f;
     gameSettings.betweenLevelsTime = 2.0f;
-    gameSettings.numOfBalls = 1;
+    gameSettings.numOfBalls = 3;
 
     currentBallSpeed = gameSettings.ballSpeed;
     currentLives = gameSettings.maxLives;
@@ -766,7 +767,7 @@ void processInput(GLFWwindow* window)
     }
         
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        fireBall(false);
+        fireBall();
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         cameraMode = 1;
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
