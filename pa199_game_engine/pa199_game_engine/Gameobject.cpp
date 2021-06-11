@@ -126,9 +126,6 @@ void Gameobject::render(float with, float height, int cameraMode)
     }
     shaderProgram.use();
 
-    // create transformations
-    Matrix4 projection = Matrix4::perspectiveMatrix(toRadians(45.0f), with / height, 0.1f, 100.0f);
-
     // camera settings
     Vector3 cameraPos;
     if(cameraMode == 1){ // normal front
@@ -156,6 +153,9 @@ void Gameobject::render(float with, float height, int cameraMode)
     Vector3 cameraRight = up.cross(cameraDirection).normalized(); // glm::normalize(glm::cross(up, cameraDirection));
     Vector3 cameraUp = cameraDirection.cross(cameraRight); // glm::cross(cameraDirection, cameraRight);
     Matrix4 view = Matrix4::lookatMatrix(cameraRight, cameraUp, cameraDirection, cameraPos);
+
+    // create transformations
+    Matrix4 projection = Matrix4::perspectiveMatrix(toRadians(45.0f), with / height, 0.1f, 100.0f);
 
     // pass transformation matrices to the shader
     shaderProgram.setMat4("projection", projection.core);

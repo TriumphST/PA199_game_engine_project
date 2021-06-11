@@ -131,54 +131,54 @@ Mesh MeshGenerator::Cube()
         front_left_up,
 
         // back face trinagle 1
-        //back_left_down,
-        //back_right_down,
-        //back_right_up,
+        back_left_down,
+        back_right_down,
+        back_right_up,
 
-        //// back face trinagle 2
-        //back_left_down,
-        //back_right_up,
-        //back_left_up,
+        // back face trinagle 2
+        back_left_down,
+        back_right_up,
+        back_left_up,
 
-        //// left face trinagle 1
-        //back_left_down,
-        //front_left_down,
-        //front_left_up,
+        // left face trinagle 1
+        back_left_down,
+        front_left_down,
+        front_left_up,
 
-        //// left face trinagle 2
-        //back_left_down,
-        //front_left_up,
-        //front_right_up,
+        // left face trinagle 2
+        back_left_down,
+        front_left_up,
+        front_right_up,
 
-        //// right face trinagle 1
-        //front_right_down,
-        //back_right_down,
-        //back_right_up,
+        // right face trinagle 1
+        front_right_down,
+        back_right_down,
+        back_right_up,
 
-        //// right face trinagle 2
-        //front_right_down,
-        //back_right_up,
-        //front_right_up,
+        // right face trinagle 2
+        front_right_down,
+        back_right_up,
+        front_right_up,
 
-        //// up face trinagle 1
-        //front_left_up,
-        //front_right_up,
-        //back_right_up,
+        // up face trinagle 1
+        front_left_up,
+        front_right_up,
+        back_right_up,
 
-        //// up face trinagle 2
-        //front_left_up,
-        //back_right_up,
-        //back_left_up,
+        // up face trinagle 2
+        front_left_up,
+        back_right_up,
+        back_left_up,
 
-        //// down face trinagle 1
-        //front_left_down,
-        //front_right_down,
-        //back_right_down,
+        // down face trinagle 1
+        front_left_down,
+        back_right_down,
+        front_right_down,
 
-        //// down face trinagle 2
-        //front_left_down,
-        //back_right_down,
-        //back_left_down,
+        // down face trinagle 2
+        front_left_down,
+        back_left_down,
+        back_right_down,
 
     };
 

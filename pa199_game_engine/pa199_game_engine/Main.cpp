@@ -62,6 +62,7 @@ bool newLevelTimer = false;
 float timer = 0.0f;
 
 std::vector <Gameobject*> sphereGOs;
+std::vector <Gameobject*> aabbGOs;
 std::vector<Gameobject*> wallGOs;
 std::vector<Gameobject*> paddleGOs;
 std::vector<Gameobject*> GOs;
@@ -163,7 +164,7 @@ void fireBall()
     for (int i = 0; i < sphereGOs.size(); i++)
     {
         srand((unsigned int)time(NULL));
-        float a = 3.0f;
+        float a = 2.5f;
         float b = 2.0f;
         int posX = (rand() % 2);
         if (posX == 0)
@@ -268,20 +269,95 @@ void wallHit(Gameobject* wall, Gameobject* sphere) {
     printStatus();
 }
 
-void checkCollisions()
-{
-    // sphere - sphere collisions
-    
+void bounceSphere(Vector3 normal, Gameobject* sphere) {
+    if (normal.dot(sphere->velocity) >= 0.0f)
+        return;
+    Vector3 Vn = normal * (normal.dot(sphere->velocity));
+    sphere->velocity = sphere->velocity - Vn * 2;
+}
+
+void checkSphereAABBCollisions() {
+    for (int s = 0; s < sphereGOs.size(); s++)
+    {
+        Gameobject* sphere = sphereGOs[s];
+        for (int a = 0; a < aabbGOs.size(); a++)
+        {
+            Gameobject* aabb = aabbGOs[a];
+            Vector3 sphereClosesPoint = sphere->position + ((aabb->position - sphere->position).normalized() * (sphere->scale.x/2.0f));
+            if(Helper::isPointInsideAABB(aabb, sphereClosesPoint) == true)
+            {
+                // sphere is touching or is inside the aabb box
+
+                // right face
+                Vector3 contact;
+
+                Vector3 topNormal = Vector3(0.0f, 1.0f, 0.0f);
+                Vector3 frontNormal = Vector3(0.0f, 0.0f, 1.0f);
+                Vector3 rightNormal = Vector3(1.0f, 0.0f, 0.0f);
+                Vector3 bottomNormal = Vector3(0.0f, -1.0f, 0.0f);
+                Vector3 backNormal = Vector3(0.0f, 0.0f, -1.0f);
+                Vector3 leftNormal = Vector3(-1.0f, 0.0f, 0.0f);
+
+                Vector3 topPlaneCoord = aabb->position;
+                topPlaneCoord.y += aabb->scale.y / 2.0f;
+                Vector3 frontPlaneCoord = aabb->position;
+                frontPlaneCoord.z += aabb->scale.z / 2.0f;
+                Vector3 rightPlaneCoord = aabb->position;
+                rightPlaneCoord.x += aabb->scale.x / 2.0f;
+                Vector3 bottomPlaneCoord = aabb->position;
+                bottomPlaneCoord.y -= aabb->scale.y / 2.0f;
+                Vector3 backPlaneCoord = aabb->position;
+                backPlaneCoord.z -= aabb->scale.z / 2.0f;
+                Vector3 leftPlaneCoord = aabb->position;
+                leftPlaneCoord.x -= aabb->scale.x / 2.0f;
+
+
+                bool isIntersectingTop = Helper::linePlaneIntersection(contact, (sphere->position-aabb->position), aabb->position, topNormal, topPlaneCoord);
+                if (isIntersectingTop) {
+                    bounceSphere(topNormal, sphere);
+                    return;
+                }
+                bool isIntersectingFront = Helper::linePlaneIntersection(contact, (sphere->position - aabb->position), aabb->position, frontNormal, frontPlaneCoord);
+                if (isIntersectingFront) {
+                    bounceSphere(frontNormal, sphere);
+                    return;
+                }
+                bool isIntersectingRight = Helper::linePlaneIntersection(contact, (sphere->position - aabb->position), aabb->position, rightNormal, rightPlaneCoord);
+                if (isIntersectingRight) {
+                    bounceSphere(rightNormal, sphere);
+                    return;
+                }
+                bool isIntersectingBottom = Helper::linePlaneIntersection(contact, (sphere->position - aabb->position), aabb->position, bottomNormal, bottomPlaneCoord);
+                if (isIntersectingBottom) {
+                    bounceSphere(bottomNormal, sphere);
+                    return;
+                }
+                bool isIntersectingBack = Helper::linePlaneIntersection(contact, (sphere->position - aabb->position), aabb->position, backNormal, backPlaneCoord);
+                if (isIntersectingBack) {
+                    bounceSphere(backNormal, sphere);
+                    return;
+                }
+                bool isIntersectingLeft = Helper::linePlaneIntersection(contact, (sphere->position - aabb->position), aabb->position, leftNormal, leftPlaneCoord);
+                if (isIntersectingLeft) {
+                    bounceSphere(leftNormal, sphere);
+                    return;
+                }
+            }
+        }
+    }
+}
+
+void checkSphereSphereCollisions() {
     for (int i = 0; i < sphereGOs.size(); i++)
     {
-        for (int j = i+1; j < sphereGOs.size(); j++)
+        for (int j = i + 1; j < sphereGOs.size(); j++)
         {
             float distance = sphereGOs[i]->position.distance(sphereGOs[j]->position);
-            if (distance <= (sphereGOs[i]->scale.x/2.0f + sphereGOs[j]->scale.x/2.0f))
+            if (distance <= (sphereGOs[i]->scale.x / 2.0f + sphereGOs[j]->scale.x / 2.0f))
             {
                 // balls collide
                 Vector3 n_j = (sphereGOs[j]->position - sphereGOs[i]->position).normalized();
-                Vector3 n_i = n_j*-1.0f;
+                Vector3 n_i = n_j * -1.0f;
 
                 Vector3 Vn_j = n_j * (n_j.dot(sphereGOs[j]->velocity));
                 sphereGOs[j]->velocity = sphereGOs[j]->velocity - (Vn_j * 2);
@@ -291,7 +367,13 @@ void checkCollisions()
             }
         }
     }
+}
 
+void checkCollisions()
+{
+    
+    checkSphereAABBCollisions();
+    checkSphereSphereCollisions();
     // sphere - paddles/walls collisions
     // check broad collisions
     for (int i = 0; i < sphereGOs.size(); i++)
@@ -532,7 +614,6 @@ int main()
     //t.runTests();
     //return 0;
 
-
     // game settings
     gameSettings.radius_wall = 5.0f;
     gameSettings.diameter_wall = 1.0f;
@@ -587,12 +668,14 @@ int main()
     //triangle->scale = Vector3(5.0f, 5.0f, 5.0f);
     //GOs.push_back(triangle);
 
-    //Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
-    //cube->scale = Vector3(5.0f, 5.0f, 5.0f);
-    //GOs.push_back(cube);
+    Gameobject * cube = new Gameobject(phongShader, &cubeMesh);
+    cube->scale = Vector3(5.0f, 1.0f, 7.0f);
+    cube->position = Vector3(0.0f, 0.0f, 0.0f);
+    aabbGOs.push_back(cube);
+    GOs.push_back(cube);
 
     createPaddles(phongShader);
-    createWalls(phongShader);
+    //createWalls(phongShader);
 
     resetBalls();
 
