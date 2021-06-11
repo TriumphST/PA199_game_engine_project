@@ -12,5 +12,7 @@ public:
     static float getAngleY(Vector3 v1, Vector3 v2);
     static bool linePlaneIntersection(Vector3& contact, Vector3 ray, Vector3 rayOrigin, Vector3 normal, Vector3 coord);
     static bool isPointInsideAABB(Gameobject * AABB, Vector3 point);
+    static float angularDistance(float alpha, float beta);
+    static int angularDirection(float alpha, float beta);
 };
 

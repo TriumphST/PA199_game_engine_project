@@ -61,3 +61,17 @@ bool Helper::isPointInsideAABB(Gameobject* aabb, Vector3 point)
     }
     return false;
 }
+
+
+float Helper::angularDistance(float alpha, float beta) {
+    float phi = fmod(fabs(beta - alpha), 360.0f);       // This is either the distance or 360 - distance
+    float distance = phi > 180.0f ? 360.0f - phi : phi;
+    return distance;
+}
+
+int Helper::angularDirection(float alpha, float beta) {
+    float phi = beta - alpha;
+    if (phi < 0)
+        return -1;
+    return 1;
+}
