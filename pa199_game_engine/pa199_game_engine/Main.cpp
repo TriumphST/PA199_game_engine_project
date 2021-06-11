@@ -270,6 +270,29 @@ void wallHit(Gameobject* wall, Gameobject* sphere) {
 
 void checkCollisions()
 {
+    // sphere - sphere collisions
+    
+    for (int i = 0; i < sphereGOs.size(); i++)
+    {
+        for (int j = i+1; j < sphereGOs.size(); j++)
+        {
+            float distance = sphereGOs[i]->position.distance(sphereGOs[j]->position);
+            if (distance <= (sphereGOs[i]->scale.x/2.0f + sphereGOs[j]->scale.x/2.0f))
+            {
+                // balls collide
+                Vector3 n_j = (sphereGOs[j]->position - sphereGOs[i]->position).normalized();
+                Vector3 n_i = n_j*-1.0f;
+
+                Vector3 Vn_j = n_j * (n_j.dot(sphereGOs[j]->velocity));
+                sphereGOs[j]->velocity = sphereGOs[j]->velocity - (Vn_j * 2);
+
+                Vector3 Vn_i = n_i * (n_i.dot(sphereGOs[i]->velocity));
+                sphereGOs[i]->velocity = sphereGOs[i]->velocity - (Vn_i * 2);
+            }
+        }
+    }
+
+    // sphere - paddles/walls collisions
     // check broad collisions
     for (int i = 0; i < sphereGOs.size(); i++)
     {
